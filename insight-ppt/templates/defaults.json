@@ -1,0 +1,49 @@
+{
+  "name": "Personal presentation defaults",
+  "applies_to": "Built-in layouts unless the user explicitly selects a different style; preserve supplied corporate templates.",
+  "slide_background": "FFFFFF",
+  "palette": {
+    "primary": "000000",
+    "secondary": "FFFFFF",
+    "accent": "C7000B"
+  },
+  "fonts": {
+    "title": "Segoe UI",
+    "body": "Microsoft YaHei"
+  },
+  "title_style": {
+    "size_pt": 22,
+    "bold": true,
+    "max_lines": 2
+  },
+  "section_style": {
+    "size_pt": 11,
+    "bold": true,
+    "color": "C7000B"
+  },
+  "body_style": {
+    "size_pt": 11,
+    "min_size_pt": 10,
+    "max_bullets": 5
+  },
+  "diagram_style": {
+    "label_size_pt": 10,
+    "native_shapes": true
+  },
+  "surfaces": {
+    "table_header_fill": "F2E5E6",
+    "table_row_fills": [
+      "FFFFFF",
+      "F2F2F2"
+    ],
+    "text_box_fills": [
+      "FFFFFF",
+      "F2F2F2",
+      "F2E5E6"
+    ],
+    "diagram_group_fill": "F2F2F2",
+    "border_color": "D9D4D5"
+  },
+  "surface_policy": "Optional fills selected for hierarchy and contrast; white applies to the slide canvas, not every object.",
+  "density": "Compact figures with explanatory text and comparison tables where useful"
+}

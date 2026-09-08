@@ -1,0 +1,47 @@
+{
+  "name": "Technical Architecture",
+  "mode": "configured",
+  "palette": {
+    "primary": "243447",
+    "secondary": "FFFFFF",
+    "accent": "007F86"
+  },
+  "fonts": {
+    "title": "Aptos Display",
+    "body": "Aptos"
+  },
+  "title_style": {
+    "size_pt": 30,
+    "bold": true,
+    "max_lines": 2
+  },
+  "body_style": {
+    "size_pt": 20,
+    "min_size_pt": 18,
+    "max_bullets": 5
+  },
+  "diagram_style": {
+    "native_shapes": true,
+    "new_component_color": "accent",
+    "modified_component_style": "dashed outline",
+    "unchanged_component_style": "neutral outline",
+    "label_size_pt": 16
+  },
+  "layout": {
+    "width_in": 13.333333,
+    "height_in": 7.5,
+    "margin_in": 0.5,
+    "guidance": "structured components, callouts, evidence table"
+  },
+  "density": "medium-high",
+  "logo_path": null,
+  "icons": false,
+  "overrides": {
+    "palette": null,
+    "fonts": null,
+    "logo_path": null,
+    "density": null,
+    "icons": null
+  },
+  "source_pptx": null
+}

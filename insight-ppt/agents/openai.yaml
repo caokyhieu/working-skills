@@ -1,0 +1,4 @@
+interface:
+  display_name: "Insight PPT"
+  short_description: "Product-aligned technology proposal decks"
+  default_prompt: "Use $insight-ppt to create an editable technology proposal deck for an HQ product."

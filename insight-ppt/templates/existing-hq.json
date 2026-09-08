@@ -1,0 +1,27 @@
+{
+  "name": "Existing HQ Template",
+  "mode": "inherit",
+  "palette": null,
+  "fonts": null,
+  "title_style": null,
+  "body_style": null,
+  "diagram_style": {
+    "native_shapes": true,
+    "new_component_color": "accent",
+    "modified_component_style": "dashed outline",
+    "unchanged_component_style": "neutral outline",
+    "label_size_pt": 16
+  },
+  "layout": null,
+  "density": "inherit",
+  "logo_path": null,
+  "icons": false,
+  "overrides": {
+    "palette": null,
+    "fonts": null,
+    "logo_path": null,
+    "density": null,
+    "icons": null
+  },
+  "source_pptx": null
+}
