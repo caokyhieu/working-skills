@@ -55,7 +55,7 @@ Rules:
 
 ### Step 4: Offer a template gallery
 
-Present the layout options below and ask the user to select by number or name. Built-in layouts use the shared personal defaults in `templates/defaults.json`: white slide canvas, Segoe UI headings, Microsoft YaHei body text at 10–11 pt, red/black text, and optional muted red/grey object fills. Layout choice changes organization and emphasis; an explicit palette/font choice overrides the defaults. Supplied corporate templates retain their own styling. If the user does not choose, recommend a layout based on audience:
+Present the layout options below and ask the user to select by number or name. Built-in layouts use the shared personal defaults in `templates/defaults.json`: the V4 muted red/grey design, with a white slide canvas, Arial throughout, 29 pt titles, 18 pt explanatory text, charcoal text, muted red emphasis, and pale red/grey object fills. Tables use charcoal headers with white text; compact tables and diagram labels are typically 14 pt. Layout choice changes organization and emphasis; an explicit palette/font choice overrides the defaults. Supplied corporate templates retain their own styling. If the user does not choose, recommend a layout based on audience:
 
 ```text
 Choose a presentation template:
@@ -119,6 +119,7 @@ Before creating the `.pptx`, show the user a concise brief containing:
 - Evidence sources available or still required
 - Value thesis for each proposal: use case, advantage over the current approach, supporting evidence, and expected product outcome
 - Initial narrative / slide outline
+- Visual plan per substantive slide: diagram/chart/table/flowchart or text, intended takeaway, required inputs, and evidence gaps; use visual-design.md for selection and sample-derived layouts
 
 Ask: **“Approve this brief and outline, or tell me what to change?”**
 
