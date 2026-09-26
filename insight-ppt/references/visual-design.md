@@ -15,6 +15,8 @@ For each substantive slide, record in the outline: conclusion, visual type, enti
 | Relationship between two numeric variables | Scatter plot |
 | Several related metrics and their interpretation | Evidence dashboard combining table, chart, and commentary |
 | Algorithm mechanism | Intermediate representations and operations; see content-and-evidence.md |
+| How a model or method is composed (frozen vs trained parts, tensors, the new operator) | Method figure, style A in [diagram-styles.md](diagram-styles.md) |
+| How a runtime process unfolds on concrete tokens, requests or time (caching, decoding, latency) | Explainer, style B in [diagram-styles.md](diagram-styles.md) |
 
 Use meaningful visuals where content calls for them, without imposing a quota or forcing every type into every deck. Missing quantitative data is a reason to use a qualitative comparison or mark an unknown, not to invent a chart. A title or decision-ask slide can remain text-led.
 

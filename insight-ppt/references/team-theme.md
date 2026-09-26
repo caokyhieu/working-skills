@@ -66,6 +66,8 @@ Ask which lab or header the deck needs only if the user belongs to a different l
 | Chart | `chart(focus=…)` | Native bar/column chart: focus series red, others grey |
 | Arrows / connectors | `arrow()`, `connector()` | Grey for neutral flow; red only for the decisive transition |
 | Rules | `rule()` | Thin grey dividers between columns or above the takeaway |
+| Diagram helpers | `panel()`, `grid()`, `zoom()`, `op()`, `route()` | Method figures: titled section panels, tensors/matrices as cell grids, zoom-in callouts, operator circles, orthogonal edges ([diagram-styles.md](diagram-styles.md)) |
+| Explainer helpers | `badge()`, `pills()`, `bracket()`, `dimension()`, `mark()`, `span()`, `legend()` | Numbered steps, token/request rows, group brackets, latency/span measures, ✓/✗, timeline segments, inline legends |
 | Contents | `deck.contents()` | Numbered agenda (red numbers, 18 pt items) |
 | Section divider | `deck.section_divider()` | Optional chapter break in decks over ~12 slides |
 

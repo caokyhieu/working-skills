@@ -50,6 +50,8 @@ For architecture slides with multiple subsystems or boundaries, also read [refer
 
 When explaining an algorithm to technical reviewers, include a visible mechanism diagram at the level needed to justify its benefit. Show the key intermediate representation and operations, not only input/output boxes or the component's location in the product. Read the algorithm diagram guidance in the content reference; retain the value argument and evidence alongside the mechanism.
 
+For model, algorithm or runtime-process diagrams you draw yourself, read [references/diagram-styles.md](references/diagram-styles.md). It sets two composition styles: the paper **method figure** (numbered panels, tensors as grids, zoom callouts, inline math) for how a model is composed, and the step-by-step **explainer** (numbered steps, token rows, brackets and dimension arrows) for how a process unfolds on concrete data. Both render in the team theme through the `team_deck.py` diagram helpers; they change the drawing, never the palette, font or components.
+
 ## Revisions and delivery
 
 For existing-deck edits or reviews, read [references/revision.md](references/revision.md). Preserve unaffected content and styling, use a new versioned filename, and identify changed slides and reasons.

@@ -141,6 +141,7 @@ All diagrams must be editable or reproducible from source. Do not use decorative
 - Show input, core mechanism, feedback/evaluation loop if relevant, and output
 - Label each component in product-relevant language
 - Use mathematical notation only if it clarifies a key difference
+- Compose it as a method figure or an explainer ([diagram-styles.md](diagram-styles.md)), whichever fits.
 - For a technical proposal whose value depends on an algorithm, show the decision-relevant mechanism visibly. A box labeled with the algorithm name or an integration pipeline does not explain the algorithm. Show the intermediate representation and operations that produce the result, and connect them to the claimed quality or efficiency benefit.
 - Distinguish offline preparation from query-time work when it explains cost or latency. Use a small worked example, similarity matrix, partition sketch, or pruning sequence where it makes the mechanism easier to understand. Label synthetic values as illustrative; preserve benchmark evidence and its scope alongside the diagram.
 

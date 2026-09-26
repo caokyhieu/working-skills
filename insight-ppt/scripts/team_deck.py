@@ -80,10 +80,11 @@ def rgb(key_or_hex):
     return RGBColor.from_string(C.get(key_or_hex, key_or_hex))
 
 
-def _font(run, size, color, bold=False, spacing=None):
+def _font(run, size, color, bold=False, spacing=None, italic=False):
     f = run.font
     f.size = Pt(size)
     f.bold = bold
+    f.italic = italic
     f.name = FONT
     f.color.rgb = rgb(color)
     rPr = run._r.get_or_add_rPr()
@@ -125,7 +126,8 @@ def _write(tf, paragraphs, size, color, bold=False, align="l", line=1.3, spacing
         for text, o in runs:
             r = p.add_run()
             r.text = text
-            _font(r, o.get("size", size), o.get("color", color), o.get("bold", bold), o.get("spacing", spacing))
+            _font(r, o.get("size", size), o.get("color", color), o.get("bold", bold), o.get("spacing", spacing),
+                  o.get("italic", False))
 
 
 class Canvas:
@@ -240,16 +242,141 @@ class Canvas:
                  "down": MSO_SHAPE.DOWN_ARROW, "up": MSO_SHAPE.UP_ARROW}[direction]
         return self.rect(x, y, w, h, color, None, shape=shape)
 
-    def connector(self, x1, y1, x2, y2, color="muted", width_pt=1.0, dashed=False, arrow_end=True):
+    def connector(self, x1, y1, x2, y2, color="muted", width_pt=1.0, dashed=False, arrow_end=True, arrow_start=False):
         cn = self.slide.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, Inches(x1), Inches(y1), Inches(x2), Inches(y2))
         cn.line.color.rgb = rgb(color)
         cn.line.width = Pt(width_pt)
         ln = cn.line._get_or_add_ln()
         if dashed:
             etree.SubElement(ln, qn("a:prstDash")).set("val", "dash")
+        if arrow_start:
+            etree.SubElement(ln, qn("a:headEnd")).set("type", "triangle")
         if arrow_end:
             etree.SubElement(ln, qn("a:tailEnd")).set("type", "triangle")
         return cn
+
+    # -- diagram helpers (references/diagram-styles.md) --------------------
+    def route(self, points, color="muted", width_pt=1.0, dashed=False, arrow_end=True):
+        """Orthogonal edge through [(x, y), ...]; only the last segment gets the arrowhead."""
+        segs = list(zip(points, points[1:]))
+        return [self.connector(a[0], a[1], b[0], b[1], color, width_pt, dashed,
+                               arrow_end and i == len(segs) - 1) for i, (a, b) in enumerate(segs)]
+
+    def badge(self, x, y, number, lead="", rest="", size=10, d=0.3):
+        """Numbered step header: dark circle with white number, bold caps verb, grey explanation."""
+        self.rect(x, y, d, d, "ink", None, shape=MSO_SHAPE.OVAL)
+        self.text(x, y, d, d, str(number), size=size, color="white", bold=True, align="ctr", anchor="ctr", wrap=False)
+        runs = [(lead.upper(), {"bold": True, "color": "ink"})] if lead else []
+        if rest:
+            runs.append(((" " if lead else "") + rest, {"color": "body"}))
+        if runs:
+            self.text(x + d + 0.12, y, 10.0, d, [runs], size=size, anchor="ctr", wrap=False)
+
+    def pills(self, x, y, labels, w=1.1, h=0.4, gap=0.22, variants=None, arrows=True, size=9.5, subs=None):
+        """Token/step sequence left to right. variants: one name or a list per pill.
+        Returns the (x, y, w, h) box of each pill for brackets, marks and dimensions."""
+        n = len(labels)
+        widths = w if isinstance(w, (list, tuple)) else [w] * n
+        vs = variants if isinstance(variants, (list, tuple)) else [variants or "white"] * n
+        boxes, cx = [], x
+        for i, lab in enumerate(labels):
+            self.node(cx, y, widths[i], h, lab, (subs or [None] * n)[i], vs[i], size=size)
+            boxes.append((cx, y, widths[i], h))
+            if arrows and i < n - 1:
+                self.connector(cx + widths[i] + 0.03, y + h / 2, cx + widths[i] + gap - 0.03, y + h / 2)
+            cx += widths[i] + gap
+        return boxes
+
+    def bracket(self, x1, x2, y, label="", below=True, color="muted", size=8.5, tick=0.08, label_color=None):
+        """Square bracket spanning x1..x2 under (or over) a group, with a centred label."""
+        t = tick if below else -tick
+        self.connector(x1, y, x1, y + t, color, 0.75, arrow_end=False)
+        self.connector(x2, y, x2, y + t, color, 0.75, arrow_end=False)
+        self.connector(x1, y + t, x2, y + t, color, 0.75, arrow_end=False)
+        if label:
+            ly = y + t + 0.03 if below else y + t - 0.25
+            self.text(x1, ly, x2 - x1, 0.22, label, size=size, color=label_color or color, bold=True, align="ctr", anchor="ctr")
+
+    def dimension(self, x1, x2, y, label="", color="ink", size=8.5, extend_to=None):
+        """Double-headed measure line (latency, window, span) with the label above it.
+        extend_to: y of the objects measured; draws thin extension lines up/down to it."""
+        if extend_to is not None:
+            for xx in (x1, x2):
+                self.connector(xx, extend_to, xx, y, "border", 0.75, arrow_end=False)
+        self.connector(x1, y, x2, y, color, 1.0, arrow_end=True, arrow_start=True)
+        if label:
+            self.text(x1, y - 0.26, x2 - x1, 0.22, label, size=size, color=color, bold=True, align="ctr", anchor="ctr")
+
+    def mark(self, x, y, ok=True, size=16):
+        """Check (ink) or cross (red) glyph; pair it with a word, colour alone is not the status."""
+        return self.text(x, y, 0.3, 0.3, "\u2713" if ok else "\u2717", size=size, color="ink" if ok else "red",
+                         bold=True, align="ctr", anchor="ctr", wrap=False)
+
+    def op(self, x, y, symbol="+", d=0.26, size=10):
+        """Small operator circle (+, ×, ⊙, σ) placed on a data path."""
+        self.rect(x, y, d, d, "white", "muted", 0.75, shape=MSO_SHAPE.OVAL)
+        return self.text(x, y, d, d, symbol, size=size, color="ink", bold=True, align="ctr", anchor="ctr", wrap=False)
+
+    def grid(self, x, y, rows, cols, cell=0.14, fill="white", cells=None, stack=0, offset=0.05, border="muted"):
+        """Tensor / matrix / vector drawn as a cell grid. cells: {(r, c): fill} highlights
+        (use 'pale_red', 'pink', 'red', 'surface'). stack: extra layers drawn behind,
+        offset up-right, for the stacked-tensor look. Returns the front grid's box."""
+        for k in range(stack, 0, -1):
+            self.rect(x + k * offset, y - k * offset, cols * cell, rows * cell, "white", border, 0.5)
+        cells = cells or {}
+        for r in range(rows):
+            for c in range(cols):
+                self.rect(x + c * cell, y + r * cell, cell, cell, cells.get((r, c), fill), border, 0.5)
+        return (x, y, cols * cell, rows * cell)
+
+    def zoom(self, src, dst, color="muted", outline_src=True):
+        """Callout from a small region src=(x, y, w, h) to its enlarged detail panel dst:
+        dashed box on the source, thin lines joining the nearer corners."""
+        sx, sy, sw, sh = src
+        dx, dy, dw, dh = dst
+        if outline_src:
+            self.rect(sx, sy, sw, sh, None, color, 0.75, dashed=True)
+        if dy + dh <= sy:            # detail above
+            pairs = [((sx, sy), (dx, dy + dh)), ((sx + sw, sy), (dx + dw, dy + dh))]
+        elif dy >= sy + sh:          # detail below
+            pairs = [((sx, sy + sh), (dx, dy)), ((sx + sw, sy + sh), (dx + dw, dy))]
+        elif dx >= sx + sw:          # detail right
+            pairs = [((sx + sw, sy), (dx, dy)), ((sx + sw, sy + sh), (dx, dy + dh))]
+        else:                        # detail left
+            pairs = [((sx, sy), (dx + dw, dy)), ((sx, sy + sh), (dx + dw, dy + dh))]
+        for (ax, ay), (bx, by) in pairs:
+            self.connector(ax, ay, bx, by, color, 0.75, arrow_end=False)
+
+    def panel(self, x, y, w, h, label, variant="neutral", size=10):
+        """Titled region: a numbered paper section (§3.2 …) or a sub-module group.
+        The label sits in a white tab at the top-left. Returns the inner content top y."""
+        fill, border, bpt, dashed, tcol, _ = VARIANTS[variant]
+        self.rect(x, y, w, h, fill, border, bpt, dashed)
+        tw = min(w - 0.3, 0.085 * len(label) + 0.4)
+        self.rect(x + 0.12, y + 0.1, tw, 0.26, "white", "border", 0.75)
+        self.text(x + 0.12, y + 0.1, tw, 0.26, label, size=size, color="ink" if variant != "dark" else tcol,
+                  bold=True, align="ctr", anchor="ctr", wrap=False)
+        return y + 0.46
+
+    def span(self, x, y, w, h, fill="pink", label=None, size=8, color="black"):
+        """Timeline/Gantt segment (prefill, decode, queue). Pair fills with a legend."""
+        self.rect(x, y, w, h, fill, "muted" if fill in ("white", "track") else None, 0.5)
+        if label:
+            self.text(x, y, w, h, label, size=size, color=color, bold=True, align="ctr", anchor="ctr", wrap=False)
+
+    def legend(self, x, y, items, size=8.5, sw=0.2, gap=0.3):
+        """Inline legend: [(variant_or_fill, label), ...] on one row. Returns the end x."""
+        cx = x
+        for key, label in items:
+            if key in VARIANTS:
+                fill, border, bpt, dashed, _, _ = VARIANTS[key]
+                self.rect(cx, y + 0.02, sw, sw * 0.8, fill, border, bpt or 0.75, dashed)
+            else:
+                self.rect(cx, y + 0.02, sw, sw * 0.8, key, "muted", 0.5)
+            wlab = 0.065 * len(label) + 0.1
+            self.text(cx + sw + 0.08, y, wlab, 0.2, label, size=size, color="body", anchor="ctr", wrap=False)
+            cx += sw + 0.08 + wlab + gap
+        return cx
 
     def stat(self, x, y, w, value, label, size=26, label_size=10):
         """Big red number with a one-line label under it."""
