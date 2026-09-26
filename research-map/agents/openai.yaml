@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Map"
+  short_description: "Translate company priorities into research problems, anchors and near-misses"
+  default_prompt: "Use $research-map to build or update research-map.md from company-context.md with me."

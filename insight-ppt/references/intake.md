@@ -55,7 +55,7 @@ Rules:
 
 ### Step 4: Offer a template gallery
 
-Present the layout options below and ask the user to select by number or name. Built-in layouts use the shared personal defaults in `templates/defaults.json`: the V4 muted red/grey design, with a white slide canvas, Arial throughout, 29 pt titles, 18 pt explanatory text, charcoal text, muted red emphasis, and pale red/grey object fills. Tables use charcoal headers with white text; compact tables and diagram labels are typically 14 pt. Layout choice changes organization and emphasis; an explicit palette/font choice overrides the defaults. Supplied corporate templates retain their own styling. If the user does not choose, recommend a layout based on audience:
+Present the layout options below and ask the user to select by number or name. All built-in layouts use the team theme (`references/team-theme.md`, `templates/defaults.json`): the branded team master, a blue topic kicker, one-line 26 pt red conclusion titles, Microsoft YaHei, grey panels, dark panels for the chosen design and red for the proposed change. Layout choice changes organization, density and emphasis, not the theme. Also ask for the deck kicker (topic line shown on every content slide) and whether to use the plain corner or a labelled corner such as "Technology Trends". Supplied corporate templates retain their own styling. If the user does not choose, recommend a layout based on audience:
 
 ```text
 Choose a presentation template:
@@ -63,31 +63,31 @@ Choose a presentation template:
 1. Executive Insight
    - Best for: VP, director, product leadership, decision meetings
    - Look: Clean whitespace, strong headline per slide, restrained diagrams, business metrics emphasized
-   - Palette: Shared personal defaults; configurable
+   - Style: Team theme
    - Detail level: Concise
 
 2. Technical Architecture
    - Best for: Architects, engineering leadership, platform teams
    - Look: Structured layouts, architecture diagrams, component callouts, evidence tables
-   - Palette: Shared personal defaults; configurable
+   - Style: Team theme
    - Detail level: Medium to high
 
 3. Product Strategy
    - Best for: Product, business, and technical mixed audience
    - Look: Product journey, value flow, roadmap, customer and KPI emphasis
-   - Palette: Shared personal defaults; configurable
+   - Style: Team theme
    - Detail level: Medium
 
 4. Research-to-Product
    - Best for: AI/ML, data systems, research transfer proposals
    - Look: Paper-to-product storyline, algorithm concept diagram, benchmark evidence, integration path
-   - Palette: Shared personal defaults; configurable
+   - Style: Team theme
    - Detail level: Medium to high
 
 5. Minimal Corporate
    - Best for: Formal HQ reviews and reusable internal decks
    - Look: Conservative, brand-friendly, low visual risk, compact tables and simple diagrams
-   - Palette: Shared personal defaults; configurable
+   - Style: Team theme
    - Detail level: Medium
 
 6. Existing HQ Template
@@ -98,11 +98,11 @@ Choose a presentation template:
 
 Template system requirements:
 
-- Implement each template as an editable style configuration, not as static images.
-- Keep colors, fonts, title styles, body styles, diagram colors, and layout rules in separate template configuration files.
-- Allow the user to override palette, font, logo, density, and use of icons.
+- Build every built-in layout from `assets/team-template.pptx` with editable native objects, not static images.
+- Keep theme tokens in `templates/defaults.json` and narrative/density guidance in the per-layout files.
+- Allow the user to override density, kicker, corner label and use of icons; change palette or fonts only on explicit request.
 - Use accessible contrast and readable font sizes.
-- Use no more than 2 fonts and 3 primary colors in a generated deck unless the supplied corporate template requires otherwise.
+- Use one font family (Microsoft YaHei) and only the team theme colours: red for emphasis, blue kicker and cyan corner in the header, greys and dark panels for structure. A supplied corporate template may require otherwise.
 
 ### Step 5: Confirm a one-page deck brief
 
@@ -111,12 +111,12 @@ Before creating the `.pptx`, show the user a concise brief containing:
 - Working title
 - Target audience
 - Duration and planned slide count
-- Selected template
+- Selected layout and deck kicker (team theme)
 - HQ products and current stack
 - Product problem
 - Proposed technology
 - Expected decision ask
-- Evidence sources available or still required
+- Evidence sources available or still required (for a research-poc idea: `alignment.md`, `proposal.md`, `summary.md`, `figures/`, the critic reviews)
 - Value thesis for each proposal: use case, advantage over the current approach, supporting evidence, and expected product outcome
 - Initial narrative / slide outline
 - Visual plan per substantive slide: diagram/chart/table/flowchart or text, intended takeaway, required inputs, and evidence gaps; use visual-design.md for selection and sample-derived layouts

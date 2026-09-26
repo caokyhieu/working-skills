@@ -1,0 +1,4 @@
+interface:
+  display_name: "Idea Extension"
+  short_description: "Novel, falsifiable proposals: Heilmeier catechism, diversified directions, iterative novelty loop"
+  default_prompt: "Use $idea-extension to extend the selected match into a novel, testable proposal."

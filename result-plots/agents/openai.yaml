@@ -1,0 +1,4 @@
+interface:
+  display_name: "Result Plots"
+  short_description: "Honest improvement figures and results summary from run records"
+  default_prompt: "Use $result-plots to plot my benchmark results against the baseline and write the summary."

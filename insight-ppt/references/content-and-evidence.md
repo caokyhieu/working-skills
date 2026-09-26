@@ -187,6 +187,8 @@ For each proposal, create a structured mapping before building slides:
 
 | Field | Required content |
 |---|---|
+| Research problem | `research-map.md` R<n>.<x>: formulation, binding constraint, win definition (when the deck comes from a research-poc idea) |
+| Ground point | From `ideas/alignment.md`: shared structure, transfer distance, bridging concept, what transfers and what changes; the rebuttal condition, stated as a risk |
 | HQ product | Product name, users, and main purpose |
 | Current capability | Current workflow or architecture relevant to the problem |
 | Product pain | User, business, or operational limitation |

@@ -1,36 +1,20 @@
 {
   "name": "Executive Insight",
   "mode": "configured",
-  "palette": {
-    "primary": "102A43",
-    "secondary": "FFFFFF",
-    "accent": "486F99"
-  },
-  "fonts": {
-    "title": "Aptos Display",
-    "body": "Aptos"
-  },
-  "title_style": {
-    "size_pt": 30,
-    "bold": true,
-    "max_lines": 2
-  },
-  "body_style": {
-    "size_pt": 20,
-    "min_size_pt": 18,
-    "max_bullets": 5
-  },
+  "palette": null,
+  "fonts": null,
+  "title_style": null,
+  "body_style": null,
   "diagram_style": {
     "native_shapes": true,
     "new_component_color": "accent",
     "modified_component_style": "dashed outline",
-    "unchanged_component_style": "neutral outline",
-    "label_size_pt": 16
+    "unchanged_component_style": "neutral outline"
   },
   "layout": {
     "width_in": 13.333333,
     "height_in": 7.5,
-    "margin_in": 0.5,
+    "margin_in": 0.78,
     "guidance": "headline, metric, restrained diagram"
   },
   "density": "concise",
@@ -43,5 +27,6 @@
     "density": null,
     "icons": null
   },
-  "source_pptx": null
+  "source_pptx": null,
+  "style_source": "defaults.json (team theme); this file only sets narrative, density and arrangement"
 }

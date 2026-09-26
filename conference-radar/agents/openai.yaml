@@ -1,0 +1,4 @@
+interface:
+  display_name: "Conference Radar"
+  short_description: "Catch up on a venue's new ideas: fetch accepted papers, find trends, cluster by mechanism, read the best, seed new ideas"
+  default_prompt: "Use $conference-radar to catch me up on the new ideas at the latest ICML, ICLR and NeurIPS in my areas."

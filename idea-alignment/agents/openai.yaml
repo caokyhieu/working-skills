@@ -1,0 +1,4 @@
+interface:
+  display_name: "Idea Alignment"
+  short_description: "Match sources to research-map problems by structure; ground point, ranking, direction synthesis"
+  default_prompt: "Use $idea-alignment to map these digests to research-map.md, write the relevance chain and ground point per match, and rank them."

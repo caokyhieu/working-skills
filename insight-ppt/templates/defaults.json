@@ -1,82 +1,182 @@
 {
-  "name": "Personal presentation defaults — V4 muted red and grey",
-  "applies_to": "Built-in layouts unless the user explicitly selects a different style; preserve supplied corporate templates.",
-  "slide_background": "FFFFFF",
-  "palette": {
-    "primary": "363338",
-    "secondary": "FFFFFF",
-    "accent": "983C45"
+  "name": "Team theme (SNI Lab research decks)",
+  "applies_to": "All built-in layouts unless the user explicitly selects another style or supplies a different corporate template.",
+  "source": "Derived from the team's example decks; build from assets/team-template.pptx with scripts/team_deck.py. Full guide: references/team-theme.md",
+  "base_template": "assets/team-template.pptx",
+  "builder": "scripts/team_deck.py",
+  "slide": {
+    "width_in": 13.333,
+    "height_in": 7.5,
+    "background": "FFFFFF"
   },
+  "branding_from_master": [
+    "lab header text",
+    "logo",
+    "Huawei Confidential line",
+    "page number",
+    "bottom colour bar",
+    "title-slide artwork"
+  ],
   "fonts": {
-    "title": "Arial",
-    "body": "Arial"
+    "title": "Microsoft YaHei",
+    "body": "Microsoft YaHei",
+    "east_asian": "Microsoft YaHei"
   },
-  "title_style": {
-    "size_pt": 29,
-    "bold": true,
-    "max_lines": 2
-  },
-  "section_style": {
-    "size_pt": 13,
-    "bold": true,
-    "color": "983C45"
-  },
-  "body_style": {
-    "size_pt": 18,
-    "min_size_pt": 17,
-    "max_bullets": 5
-  },
-  "diagram_style": {
-    "label_size_pt": 14,
-    "native_shapes": true,
-    "min_label_size_pt": 10,
-    "new_component_color": "accent",
-    "modified_component_style": "dashed outline",
-    "unchanged_component_style": "neutral outline",
-    "connector_color": "983C45"
+  "palette": {
+    "title": "C00000",
+    "accent": "C7000B",
+    "kicker": "0070C0",
+    "corner": "00B0F0",
+    "ink": "1D1D1A",
+    "black": "000000",
+    "body": "595757",
+    "muted": "898989"
   },
   "surfaces": {
-    "table_header_fill": "363338",
-    "table_row_fills": [
-      "F2E5E6",
-      "EFEEEE"
-    ],
-    "text_box_fills": [
-      "FFFFFF",
-      "EFEEEE",
-      "F2E5E6"
-    ],
-    "diagram_group_fill": "EFEEEE",
-    "border_color": "D9D4D5"
+    "panel": "F5F5F5",
+    "white": "FFFFFF",
+    "border": "DDDDDD",
+    "border_pt": 0.75,
+    "dark_panel": "1D1D1A",
+    "pale_accent": "FDF0EF",
+    "bar_track": "F0F0F0",
+    "secondary_bar": "A5A5A3",
+    "light_accent_bar": "E5B4B0",
+    "text_on_dark_secondary": "C9CEDA",
+    "text_on_accent_secondary": "F3D3D2"
   },
-  "surface_policy": "White canvas; charcoal table headers with white text; pale red/grey rows and panels; muted red emphasis. Use white text on solid accent fills.",
-  "density": "Compact figures with explanatory text and comparison tables where useful",
-  "subtitle_style": {
-    "size_pt": 17,
-    "color": "686368"
+  "header": {
+    "corner": {
+      "shape": "right triangle, top-left",
+      "color": "00B0F0",
+      "size_in": [
+        1.06,
+        0.94
+      ],
+      "variant_with_label": "0.79 x 0.86 in with rotated 7 pt white label, e.g. 'Technology Trends'"
+    },
+    "kicker": {
+      "x_in": 1.17,
+      "y_in": 0.14,
+      "max_w_in": 8.0,
+      "size_pt": 13,
+      "color": "0070C0",
+      "bold": false
+    },
+    "title": {
+      "x_in": 1.17,
+      "y_in": 0.42,
+      "w_in": 11.53,
+      "size_pt": 26,
+      "color": "C00000",
+      "bold": true,
+      "max_lines": 1,
+      "max_chars": 52
+    },
+    "tagline": {
+      "y_in": 0.92,
+      "size_pt": 10,
+      "color": "595757"
+    }
   },
-  "caption_style": {
-    "size_pt": 10,
-    "color": "686368"
+  "grid": {
+    "margin_x_in": 0.78,
+    "content_w_in": 11.78,
+    "content_top_in": 1.1,
+    "content_top_with_tagline_in": 1.3,
+    "content_bottom_in": 6.85,
+    "keep_clear": "x >= 10.7 in and y >= 6.8 in (logo); y >= 6.95 in (footer)",
+    "gutter_in": 0.2
   },
-  "table_style": {
-    "size_pt": 14,
-    "min_size_pt": 12,
-    "header_text_color": "FFFFFF",
-    "body_text_color": "363338"
+  "typography": {
+    "section_label": {
+      "size_pt": 10.5,
+      "bold": true,
+      "color": "898989",
+      "caps": true,
+      "letter_spacing": 200
+    },
+    "panel_heading": {
+      "size_pt": 11,
+      "bold": true,
+      "color": "1D1D1A"
+    },
+    "body": {
+      "size_pt": 12,
+      "range_pt": [
+        10,
+        12
+      ],
+      "color": "595757",
+      "line_spacing": 1.3
+    },
+    "dense_body": {
+      "size_pt": 9.5,
+      "range_pt": [
+        8.5,
+        9.5
+      ],
+      "color": "595757",
+      "line_spacing": 1.4
+    },
+    "node_label": {
+      "size_pt": 9.5,
+      "bold": true,
+      "sub_size_pt": 8
+    },
+    "caption": {
+      "size_pt": 9,
+      "color": "898989"
+    },
+    "tag": {
+      "size_pt": 7.5,
+      "bold": true,
+      "caps": true
+    },
+    "stat": {
+      "value_size_pt": 26,
+      "value_color": "C00000",
+      "label_size_pt": 10
+    },
+    "takeaway": {
+      "size_pt": 12,
+      "lead_bold": true,
+      "lead_color": "000000",
+      "rest_color": "595757"
+    },
+    "table": {
+      "size_pt": 10,
+      "range_pt": [
+        10,
+        10.5
+      ],
+      "header_fill": "F5F5F5",
+      "header_color": "1D1D1A",
+      "row_rule": "DDDDDD 0.5 pt",
+      "vertical_lines": false
+    },
+    "chart": {
+      "size_pt": 8,
+      "focus": "C7000B",
+      "others": [
+        "898989",
+        "A5A5A3"
+      ],
+      "gridlines": "DDDDDD"
+    },
+    "min_size_pt": 7.5
   },
-  "chart_style": {
-    "label_size_pt": 12,
-    "min_label_size_pt": 10,
-    "focus_color": "983C45",
-    "baseline_color": "686368",
-    "gridline_color": "D9D4D5"
+  "component_roles": {
+    "neutral panel (F5F5F5 + DDDDDD border)": "baseline, existing, context",
+    "white panel (DDDDDD border)": "sub-components inside a panel",
+    "dark panel (1D1D1A, white text)": "the chosen/final design or the key conclusion; at most 1-2 per slide",
+    "accent fill (C7000B, white text)": "the single component or step the proposal changes/owns",
+    "red outline": "emphasized step or new component",
+    "red dashed outline": "inferred, future, or in-progress; always explain in a legend or caption",
+    "pale accent (FDF0EF)": "soft highlight, table cell emphasis, warning note",
+    "callout strip (panel + 0.04 in red left bar)": "the one sentence the reader must remember from a section",
+    "takeaway line (bold lead + grey rest)": "slide conclusion at the bottom",
+    "grey arrows (898989)": "neutral flow; red arrow only for the decisive transition"
   },
-  "shades": {
-    "light_grey": "EFEEEE",
-    "muted_grey": "686368",
-    "rule_grey": "D9D4D5",
-    "pale_red": "F2E5E6"
-  },
-  "typography_policy": "Match the V4 visual hierarchy: 29 pt titles, 18 pt explanatory body, 17 pt subtitles, 13 pt section headings, 14 pt tables/diagrams, and 10 pt captions. Compact figure labels may use 10–17 pt where needed; reflow or split content rather than shrink all slide text."
+  "typography_policy": "Titles are one conclusion-led line at 26 pt. Body text 10-12 pt; dense diagram slides 8.5-9.5 pt; never below 7.5 pt. If content does not fit, split the slide rather than shrinking text further."
 }

@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "description": "Stage graph for a paper-to-POC idea. Paths are relative to poc/<idea-id>/. 'deps' outputs are implicit inputs. A stage is stale when any input fingerprint differs from the one recorded when it completed. 'critic': true means stage-critic reviews the output before completion (poc_state.py refuses `complete` on a 'block' review and `approve` without a review of the current output).",
+  "stages": [
+    {
+      "id": "digest",
+      "owner": "source-digest",
+      "deps": [],
+      "inputs": [
+        "sources/sources.md",
+        "sources/*/source.*"
+      ],
+      "outputs": [
+        "sources/*/digest.md"
+      ],
+      "gate": false,
+      "critic": true
+    },
+    {
+      "id": "aligned",
+      "owner": "idea-alignment",
+      "deps": [
+        "digest"
+      ],
+      "inputs": [
+        "../../company-context.md",
+        "../../research-map.md",
+        "../../scouting/calibration.md"
+      ],
+      "outputs": [
+        "ideas/alignment.md"
+      ],
+      "gate": true,
+      "gate_question": "Which match(es) should go forward?",
+      "critic": true
+    },
+    {
+      "id": "proposed",
+      "owner": "idea-extension",
+      "deps": [
+        "digest",
+        "aligned"
+      ],
+      "inputs": [
+        "../../research-map.md"
+      ],
+      "outputs": [
+        "ideas/proposal.md"
+      ],
+      "gate": true,
+      "gate_question": "Approve the hypothesis, threshold, falsification criterion and experiment plan?",
+      "critic": true
+    },
+    {
+      "id": "reproduced",
+      "owner": "bench-setup",
+      "deps": [
+        "digest",
+        "proposed"
+      ],
+      "inputs": [],
+      "outputs": [
+        "experiments/plan.md",
+        "experiments/reported_targets.json",
+        "experiments/reproduction.md"
+      ],
+      "gate": true,
+      "gate_question": "Accept the reproduction verdict (and any PARTIAL caveats) before running the extension?",
+      "expensive": true,
+      "critic": true
+    },
+    {
+      "id": "extended",
+      "owner": "bench-setup",
+      "deps": [
+        "proposed",
+        "reproduced"
+      ],
+      "inputs": [],
+      "outputs": [
+        "experiments/extension.md"
+      ],
+      "gate": false,
+      "expensive": true,
+      "critic": true
+    },
+    {
+      "id": "plotted",
+      "owner": "result-plots",
+      "deps": [
+        "proposed",
+        "extended"
+      ],
+      "inputs": [
+        "results/runs.jsonl"
+      ],
+      "outputs": [
+        "results/summary.md",
+        "figures/*.svg"
+      ],
+      "gate": false,
+      "critic": true
+    },
+    {
+      "id": "deck",
+      "owner": "insight-ppt",
+      "deps": [
+        "aligned",
+        "proposed",
+        "plotted"
+      ],
+      "inputs": [
+        "../../research-map.md"
+      ],
+      "outputs": [
+        "deck/*.pptx"
+      ],
+      "gate": true,
+      "gate_question": "Approve the deck for presentation?",
+      "critic": true
+    }
+  ]
+}

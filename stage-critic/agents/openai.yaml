@@ -1,0 +1,4 @@
+interface:
+  display_name: "Stage Critic"
+  short_description: "Independent critique of a research-poc stage output against its rubric"
+  default_prompt: "Use $stage-critic to review the latest output of stage <stage> in poc/<idea-id>."

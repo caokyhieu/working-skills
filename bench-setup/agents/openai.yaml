@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bench Setup"
+  short_description: "Reproduce-first, fair benchmarks for research extensions"
+  default_prompt: "Use $bench-setup to reproduce the paper's baseline and benchmark my proposed extension."

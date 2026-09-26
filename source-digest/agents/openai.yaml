@@ -1,0 +1,4 @@
+interface:
+  display_name: "Source Digest"
+  short_description: "Structured digests: purpose, mechanism, canonical formulation, weak spots, reproducible benchmark protocol"
+  default_prompt: "Use $source-digest to read this source and extract its formulation, insight, weak spots, and benchmark protocol."

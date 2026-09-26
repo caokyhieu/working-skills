@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research POC"
+  short_description: "Paper-to-proposal research workspace, stage tracker and critic loop"
+  default_prompt: "Use $research-poc to start or resume a paper-to-POC idea, run the critic after each stage, and tell me the next step."

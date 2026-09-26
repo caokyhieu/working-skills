@@ -65,15 +65,15 @@ For repeated or crowded layouts, calculate positions from a grid and container b
 - Use solid lines for the main confirmed/proposed path and a separately explained treatment for uncertainty or secondary dependencies. Keep edge semantics distinct from the existing/modified/new status on nodes.
 - Save edge endpoints, labels, container membership and bend points in the semantic source. Attach native connector endpoints to shapes when the presentation tool supports it; otherwise preserve the geometry in reproducible source and recheck routes after moves.
 
-## V4 styling for nested architecture
+## Team-theme styling for nested architecture
 
-Resolve exact values from `templates/defaults.json`; the following is the shared visual grammar:
+Resolve exact values from `templates/defaults.json` and build with `scripts/team_deck.py` (`card`, `node`, `arrow`, `connector`, `section`). The shared visual grammar:
 
-- **Canvas:** white. **Outer group:** light grey with a clear charcoal heading. **Nested group:** white or pale red with a thin neutral boundary and its own heading band. Avoid using the same fill for every nesting level.
-- **Ordinary component:** white with a neutral border and charcoal text. **Proposed change:** pale red with muted-red border/text, plus a “New” or “Modified” label. Reserve solid muted-red fills with white text for a small number of decisive highlights.
-- **Typography:** Arial; component labels typically 14 pt. Group headings should remain visibly distinct through weight or size. Reserve small labels for secondary detail; do not shrink all nodes to fit.
-- **Connections:** use the resolved connector color; if highlighting a main path, keep secondary lines neutral and explain any line-style differences. Use consistent line weights and modest arrowheads. Avoid shadows and gradients.
-- Use native grouping where it helps a reviewer move a subsystem together, while keeping its text and shapes editable. Keep container backgrounds behind connectors and nodes; connectors must not obscure labels.
+- **Canvas:** white, under the branded master. **Outer group:** grey `F5F5F5` panel with a thin `DDDDDD` border and a bold 9.5–11 pt heading inside its top-left, or a spaced grey caps section label above it. **Nested components:** white nodes with `DDDDDD` borders inside the grey group, so each nesting level has a different fill.
+- **Status:** ordinary components are `neutral`/`white`. The component the proposal adds or owns is `accent` (solid red, white text) or `outline` (red border). Inferred, future or in-progress parts are `dashed` red. The chosen or final subsystem can be `dark`. Add a legend or caption such as "solid is confirmed, dashed is inferred"; colour alone must not carry status.
+- **Typography:** Microsoft YaHei; node labels 9.5 pt bold with an 8 pt grey second line; group headings visibly stronger. Do not shrink node text below 8 pt. Enlarge the diagram or split it instead.
+- **Connections:** small grey (`898989`) block arrows or 1 pt connectors for flow; 8–9 pt grey edge labels beside the arrow; red only for the decisive path. Use consistent line weights and no shadows or gradients (the library strips theme effects).
+- Leave a side column (about 2.5–3 in) for "What changed", "Guards" or "Still not public" notes when the architecture needs interpretation, as the team decks do.
 
 ## Review the architecture, not just the shape bounds
 

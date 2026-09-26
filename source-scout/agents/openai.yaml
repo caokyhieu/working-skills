@@ -1,0 +1,4 @@
+interface:
+  display_name: "Source Scout"
+  short_description: "Find and screen candidate sources by problem structure, from the research map's anchors"
+  default_prompt: "Use $source-scout to scan from research-map.md anchors and queries, screen each hit with a relevance chain, and show me the shortlist."

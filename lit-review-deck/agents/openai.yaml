@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lit Review Deck"
+  short_description: "Poster-style slide deck of recent papers, one slide per paper, tied to company directions"
+  default_prompt: "Use $lit-review-deck to review the last 12 months of work on our priorities and build a poster-style deck."
