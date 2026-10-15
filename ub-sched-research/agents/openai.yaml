@@ -1,0 +1,4 @@
+interface:
+  display_name: "UB Scheduler Research"
+  short_description: "Research YARN / Spark / Flink scheduling on UnifiedBus SuperPoDs with a shared ontology and engine crosswalk"
+  default_prompt: "Use $ub-sched-research to set up the ub-sched workspace and map this source onto the UB and engine ontologies."
