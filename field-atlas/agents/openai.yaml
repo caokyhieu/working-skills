@@ -1,0 +1,4 @@
+interface:
+  display_name: "Field Atlas"
+  short_description: "Map a research field with provenance, explain how it developed, and propose testable cross-domain transfers"
+  default_prompt: "Use $field-atlas to build an atlas of this field from the last few years of ICLR, ICML and NeurIPS, explain how it developed, and propose transfers from a neighbouring field."
