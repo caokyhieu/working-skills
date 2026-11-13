@@ -1,6 +1,6 @@
 # Working Skills
 
-Agent skills that turn a technical idea into a company proposal backed by evidence: map the company's priorities to research problems, scout and read top-tier ML, AI or database papers, open-source projects and technical blog posts, align ideas with the business by problem structure rather than keywords, propose a novel extension, benchmark it, plot the results and present a proof of concept (POC) in the team's slide style. Every stage output is critiqued by an independent stage critic before you see it. A separate track turns the last twelve months of published work into a poster-style literature-review deck, and another catches you up on the new ideas at a conference edition.
+Agent skills that turn a technical idea into a company proposal backed by evidence: map the company's priorities to research problems, scout and read top-tier ML, AI or database papers, open-source projects and technical blog posts, align ideas with the business by problem structure rather than keywords, propose a novel extension, benchmark it, plot the results and present a proof of concept (POC) in the team's slide style. Every stage output is critiqued by an independent stage critic before you see it. A separate track turns the last twelve months of published work into a poster-style literature-review deck, another catches you up on the new ideas at a conference edition, and a third keeps a multi-year atlas of a field and proposes testable transfers between fields.
 
 The matching and critique rules are borrowed from published models of analogy, argument and self-correction (structure mapping, purpose–mechanism analogy search, Toulmin, the Heilmeier catechism, grounded critique); they are condensed in [research-poc/references/thinking-models.md](research-poc/references/thinking-models.md).
 
@@ -18,6 +18,8 @@ The skills are plain `SKILL.md` instructions plus references, templates and scri
 - [Use a skill on its own](#use-a-skill-on-its-own)
 - [Review recent papers as a poster deck](#review-recent-papers-as-a-poster-deck)
 - [Catch up on a conference](#catch-up-on-a-conference)
+- [Map a field and find transfers](#map-a-field-and-find-transfers)
+- [Research schedulers for UnifiedBus SuperPoDs](#research-schedulers-for-unifiedbus-superpods)
 - [Build decks in the team theme](#build-decks-in-the-team-theme)
 - [Workspace layout](#workspace-layout)
 - [Script reference](#script-reference)
@@ -39,6 +41,8 @@ The skills are plain `SKILL.md` instructions plus references, templates and scri
 | [result-plots](result-plots/SKILL.md) | `plotted` | Draws charts with confidence intervals and tests the hypothesis against its threshold | `figures/`, `results/summary.md` |
 | [insight-ppt](insight-ppt/SKILL.md) | `deck` | Builds an editable proposal deck in the team theme | `deck/*.pptx` |
 | [conference-radar](conference-radar/SKILL.md) | standalone | Fetches a venue edition's accepted papers (ICLR, ICML, NeurIPS, CVPR, ACL, EMNLP, …, or "accepted at" arXiv preprints), finds rising terms against the previous edition, clusters papers by shared mechanism, reads the representatives and proposes idea seeds | `radar/<id>/radar.md`, `cards/` |
+| [field-atlas](field-atlas/SKILL.md) | standalone | Keeps a persistent atlas of a field from selected venues plus citation-following: papers with versions, dates, reviews, repositories and citations under provenance; overlapping facets; extraction cards on a shared ontology of problems, mechanisms, assumptions, claims and evidence. Explains development as changes with evidence of influence, keeps attention, momentum and progress apart, and proposes cross-domain transfers with compatibility checks, prior-art search and a rejection criterion | `atlas/<field>/atlas.md`, `cards/`, `atlas/hypotheses/` |
+| [ub-sched-research](ub-sched-research/SKILL.md) | standalone, domain | Researches YARN / Spark / Flink scheduling on UnifiedBus SuperPoDs of Matrix Servers: a five-layer UB ontology beside each engine's own ontology, a crosswalk showing where the engines cannot express UB concepts, ontology cards per source, a cited facts register, a gap matrix, research questions and designs that land in real engine plugin points | `ub-sched/cards/`, `matrix.md`, `questions.md`, `designs/` |
 | [lit-review-deck](lit-review-deck/SKILL.md) | standalone | Reviews the last 12 months of papers, blogs and releases and builds a poster-style deck: one block per paper, figure captured from the original | `reviews/<id>/deck/*.pptx` |
 
 ```text
@@ -63,6 +67,8 @@ research-map ─▶ source-scout ──▶ source-digest ─▶ idea-alignment �
 | `result-plots/scripts/plot_results.py` | `matplotlib` |
 | `insight-ppt/scripts/team_deck.py` | `python-pptx` |
 | `conference-radar/scripts/radar.py` | standard library only (network access to the venue sites and arXiv; uses `curl` when present) |
+| `field-atlas/scripts/atlas.py` | standard library only (network access to arXiv, OpenReview, GitHub and Semantic Scholar for `dates`, `reviews`, `repos`, `cites`) |
+| `ub-sched-research/scripts/ub_sched.py` | standard library only |
 | `lit-review-deck/scripts/poster_deck.py` | `python-pptx` |
 | `lit-review-deck/scripts/figure_grab.py` | `pymupdf`, or poppler-utils + `Pillow` |
 | `insight-ppt/scripts/make_team_template.py` | `python-pptx`, `Pillow` |
@@ -83,7 +89,7 @@ Skills are copied into the project where you work. Claude Code loads project ski
 git clone https://github.com/caokyhieu/working-skills.git
 cd working-skills
 PROJECT_DIR="/absolute/path/to/your-project"
-SKILLS="research-poc research-map stage-critic source-scout source-digest idea-alignment idea-extension bench-setup result-plots insight-ppt lit-review-deck conference-radar"
+SKILLS="research-poc research-map stage-critic source-scout source-digest idea-alignment idea-extension bench-setup result-plots insight-ppt lit-review-deck conference-radar field-atlas ub-sched-research"
 ```
 
 **Claude Code**
@@ -103,7 +109,7 @@ for s in $SKILLS; do cp -R "$s" "$PROJECT_DIR/.agents/skills/"; done
 Notes:
 
 - Copy **whole folders**. The instructions depend on each folder's `references/`, `templates/`, `scripts/` and `assets/`.
-- Always install `research-poc` with any of the research skills; they follow its workspace contract. Install `research-map` and `stage-critic` with it: alignment and scouting refuse to run without a confirmed research map, and the orchestrator runs the critic after every stage. To use only the deck skill, install `insight-ppt` by itself. `lit-review-deck` needs `insight-ppt` beside it for the team theme, and uses `source-scout` when it is installed. `conference-radar` runs on its own.
+- Always install `research-poc` with any of the research skills; they follow its workspace contract. Install `research-map` and `stage-critic` with it: alignment and scouting refuse to run without a confirmed research map, and the orchestrator runs the critic after every stage. To use only the deck skill, install `insight-ppt` by itself. `lit-review-deck` needs `insight-ppt` beside it for the team theme, and uses `source-scout` when it is installed. `conference-radar` runs on its own. `field-atlas` runs on its own but fetches venue listings with `conference-radar`'s script and follows citations with `source-scout`'s `scholar_search.py`, so install those two beside it. `ub-sched-research` runs on its own too, but cites `research-poc`'s thinking models and hands designs to `source-digest`, `idea-extension` and `bench-setup` when they are installed.
 - `agents/openai.yaml` is Codex metadata; Claude Code ignores it.
 - Restart the agent after installing. In Claude Code, skills appear as `/research-poc`, `/research-map`, `/source-scout`, `/source-digest`, `/stage-critic`, and so on. In Codex, type `/skills` or mention `$research-poc`.
 
@@ -421,6 +427,56 @@ Supported listings: the virtual sites of ICLR, ICML, NeurIPS, CVPR, ICCV, ECCV a
 
 Hand-offs go only where you choose: a seed to `research-poc`, a cluster's queries to the `source-scout` watchlist, or the cards to `lit-review-deck` for a team deck.
 
+## Map a field and find transfers
+
+`field-atlas` answers four questions and keeps their answers apart: **what does this area contain**, **how has it developed**, **what is gaining attention or making progress**, and **which ideas could transfer between areas**. A highly ranked paper, a growing topic and a promising transfer are different things, so the atlas never merges them into one score.
+
+```text
+/field-atlas Build an atlas of active learning from ICLR, ICML and NeurIPS 2022–2026, standard depth.
+/field-atlas Add a second field: research agents and tool use. Which active-learning techniques could transfer?
+```
+
+It differs from `conference-radar` in scope and memory: the radar catches you up on one venue edition; the atlas keeps a store that grows over years and fields.
+
+- **Evidence store with provenance.** Each venue edition is fetched with `conference-radar` and ingested into `atlas/<field>/papers.jsonl`, which merges the arXiv, OpenReview and proceedings versions of a paper and keeps every venue appearance (main track, workshop, findings) separately. It records first-public and proceedings dates, OpenReview scores with their scale and spread, verified repositories with dated star counts, and dated citation counts. Missing values stay missing. Citation-following with `source-scout` reaches beyond the selected venues, so the venue list does not limit what can be found.
+- **Several facets per paper.** Domain, problem, technique, setting and constraint, all overlapping. A paper filed only under "robotics" would hide its link to an agent that has to pick expensive tools.
+- **A shared ontology** in `atlas/ontology.md`: problems, methods, mechanisms, assumptions, constraints, datasets, metrics, claims, evidence and limitations, with typed relations and controlled concept names. Fields stay comparable because they share it; it is extended only with your approval, and each change is versioned. Each paper read in full gets a card in which every claim carries its source location and is marked as either the authors' assertion or an experimental result.
+- **Development as changes.** `atlas.py changes` finds candidate events: an assumption relaxed, a technique entering a new domain, evaluation becoming more realistic. Each event is marked as influence (a card records the citing sentence) or **sequence only**. Topic shares come with n, facet coverage, the venue mix and the date basis.
+- **Transfers from structure.** `atlas.py bridges` lists methods and mechanisms recorded on a problem in one domain but not in another, together with the assumptions the technique needs. An absent link counts as a lead to search, never as a discovery. A hypothesis in `atlas/hypotheses/` includes the role-by-role mapping, the compatibility gaps, a prior-art search across every alias, an experiment and a rejection criterion fixed before any run.
+
+```sh
+A=.claude/skills/field-atlas/scripts/atlas.py; R=.claude/skills/conference-radar/scripts/radar.py
+python $A init --field active-learning
+python $R fetch virtual --conf iclr --year 2025 --out atlas/active-learning/raw/iclr-2025.jsonl
+python $A ingest atlas/active-learning/raw/iclr-2025.jsonl --field active-learning --proceedings-date 2025-04-24
+python $A dates --field active-learning                       # arXiv v1 first-public dates
+python $A reviews --field active-learning --venue-id ICLR.cc/2025/Conference --scale "1,3,5,6,8,10"   # needs OPENREVIEW_USERNAME/PASSWORD
+python $A facets facets-batch1.jsonl --field active-learning  # facet values and relevance written by the agent
+python $A check && python $A graph && python $A bridges
+python $A rank --field active-learning --view reading         # also: attention, momentum; --view transfer for hypotheses
+python $A share --field active-learning --dim technique --period year --date first_public
+```
+
+The atlas also learns from use. `log.md` records searches and extraction failures, `playbook.md` holds only rules that were tested on cases other than the ones that motivated them, and `atlas.py audit` samples claim and evidence rows for a person to check against the source. See [references/evidence.md](field-atlas/references/evidence.md), [development.md](field-atlas/references/development.md), [transfer.md](field-atlas/references/transfer.md) and [learning.md](field-atlas/references/learning.md).
+
+## Research schedulers for UnifiedBus SuperPoDs
+
+`ub-sched-research` is a domain lens for one research direction: how YARN, Spark and Flink should schedule work when UnifiedBus lets one task use CPU, memory and NPUs spread over several Matrix Servers. It keeps two kinds of ontology side by side:
+
+- a **UB ontology** in five layers (physical topology, UB fabric, logical resource, workload and scheduler, research) that keeps *physical placement*, *logical allocation* and *accessibility over a UB path* apart. The Matrix Server is the physical unit; resource compositions are what gets allocated.
+- each **engine's own ontology** (YARN containers and ResourceRequests, Spark stages, executors and locality levels, Flink slots and slot-sharing groups), in the engine's own terms, with its scheduling levels, node-local assumptions and plugin points.
+
+A crosswalk links the two and labels each engine concept `exact`, `degenerate` (the single-server case), `lossy` or `none`; the research questions come from the lossy and missing rows. Every design must say where it lands in the engines: cluster, application or task level, and plugin, protocol change or fork.
+
+```text
+/ub-sched-research Set up the workspace. We target Hadoop 3.3, Spark 3.5 and Flink 1.20, all on YARN.
+/ub-sched-research Card the delay scheduling paper and Spark's TaskSetManager at v3.5.0.
+/ub-sched-research Build the matrix and update the questions; which crosswalk rows have no evidence yet?
+/ub-sched-research Sketch a co-designed scheduler for Q4 (shuffle through the UB memory pool).
+```
+
+Hardware numbers come only from `ub-sched/facts.md`, each with a source; facts marked `internal` never go into search queries or shared material. The card builds on a source-digest when one exists, and confirmed design sketches go on to `idea-extension` and `bench-setup`.
+
 ## Build decks in the team theme
 
 `insight-ppt` builds editable PowerPoint decks that look like the team's research decks. It starts from [`assets/team-template.pptx`](insight-ppt/assets/team-template.pptx), whose master slide supplies the lab header, logo, "Huawei Confidential" line, page number, footer bar and title-slide artwork. [`team_deck.py`](insight-ppt/scripts/team_deck.py) adds content as native, editable shapes: cyan corner triangle, blue topic kicker, one-line red conclusion titles, grey and dark cards, red-bar callout strips, takeaway lines, stat numbers, tables and native charts.
@@ -477,6 +533,19 @@ your-project/
 │   ├── interests.md                 #   your areas, filter terms, ignore list, ideas already known
 │   └── <radar-id>/                  #   scope.md, papers.jsonl, baseline.jsonl, shortlist.jsonl,
 │                                    #   triage.md, cards/<paper-id>.md, radar.md
+├── atlas/                           # optional, standalone: field-atlas
+│   ├── ontology.md, playbook.md     #   shared schema and concepts (versioned); validated rules
+│   ├── hypotheses/H-nnn-*.md        #   transfer hypotheses, kept apart from findings
+│   ├── graph.jsonl, bridges.md, changes.md, eval/   # generated, and extraction audits
+│   └── <field>/                     #   scope.md, papers.jsonl, raw/, fulltext/, cards/<paper-id>.md,
+│                                    #   log.md, atlas.md
+├── ub-sched/                        # optional, standalone: ub-sched-research
+│   ├── ontology.md, engines.md      #   living UB ontology and engine ontologies + crosswalk
+│   ├── facts.md                     #   cited UB hardware and engine-version facts (public / internal)
+│   ├── questions.md                 #   research questions and hypotheses
+│   ├── cards/<source-id>.md         #   ontology card per paper, repo, doc or code module
+│   ├── designs/<name>.md            #   scheduler design sketches landed in the engines
+│   └── matrix.md                    #   generated coverage and gap matrix
 ├── reviews/<review-id>/             # optional, standalone: lit-review-deck
 │   ├── brief.md                     #   scope, themes, window, search topics
 │   ├── papers/<paper-id>/card.md, source.pdf, figures/*.png + *.json
@@ -565,6 +634,33 @@ Writes, per metric, bars with 95% CIs, a change-vs-baseline chart, a CSV, trade-
 | `show F [--offset N] [--limit 40] [--chars 500]` | Read a batch as compact Markdown |
 
 `fetch` merges into its output and de-duplicates by title. Raw listings are cached in `.cache/` beside the output.
+
+**Field atlas**: `field-atlas/scripts/atlas.py [--root atlas] <command>` (standard library)
+
+| Command | Purpose |
+|---|---|
+| `init [--field F]` | Create `atlas/` (ontology, playbook, hypotheses) and a field folder; existing files are kept |
+| `ingest FILE --field F [--via policy\|citation\|search] [--proceedings-date D]` | Import conference-radar or scholar_search records; merge versions by arXiv id, DOI, OpenReview id, ACL id or title; keep every venue appearance |
+| `dates --field F` | First-public dates from arXiv v1 |
+| `reviews --field F --venue-id V [--scale S] [--review-group G] [--from-file J] [--save J]` | OpenReview scores, confidences and decisions; group statistics over every scored submission |
+| `set --field F ID key=value …` | Set one paper's fields (`repo.url`, `repo.status`, `repo.evidence`, `first_public.date`, `note=…`) |
+| `repos --field F` / `cites --field F` | Dated GitHub star and Semantic Scholar citation observations |
+| `facets FILE --field F` | Import facet values and relevance; values must be ontology concepts allowed in that facet |
+| `show --field F [--offset N] [--limit 40] [--abstracts] [--missing]` | Read papers in batches |
+| `status` | Coverage per field |
+| `check [--field F]` | Validate cards and hypotheses against `ontology.md`; exit 1 on problems |
+| `graph` / `changes` / `bridges [--facets]` | Compile cards into `graph.jsonl`; candidate development events; cross-domain transfer leads |
+| `share --field F --dim D [--period year\|half\|quarter] [--date first_public\|proceedings] [--cutoff D]` | Topic share with n, coverage and venue-mix warnings; `--cutoff` for backtests |
+| `rank --view reading\|attention\|momentum --field F` / `rank --view transfer` | Separate rankings with printed weights (`--weights`); missing components listed, not zeroed |
+| `audit [--n 20]` | Sample claim and evidence rows into `eval/` for a human check |
+
+**UB scheduler research**: `ub-sched-research/scripts/ub_sched.py <command> [--dir ub-sched]` (standard library)
+
+| Command | Purpose |
+|---|---|
+| `init` | Create `ub-sched/` with the ontology, engine ontologies, facts register and questions (existing files are kept) |
+| `check` | Validate card front matter against the workspace `ontology.md` and `engines.md` (unknown concepts, engine terms, enums, missing level); exit 1 on problems |
+| `matrix` | Write `matrix.md`: sources × layers, UB concepts no card covers, lossy / missing crosswalk rows with the cards that touch them |
 
 **Review decks**: `lit-review-deck/scripts/poster_deck.py <blocks.json> --out <deck.pptx> [--team-deck PATH]`
 Builds the poster deck (title, contents, legend, theme slides, also-worth-reading, next steps, sources) and writes `sources.md` beside it.
