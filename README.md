@@ -20,6 +20,7 @@ The skills are plain `SKILL.md` instructions plus references, templates and scri
 - [Catch up on a conference](#catch-up-on-a-conference)
 - [Map a field and find transfers](#map-a-field-and-find-transfers)
 - [Research schedulers for UnifiedBus SuperPoDs](#research-schedulers-for-unifiedbus-superpods)
+- [Document AI-generated code](#document-ai-generated-code)
 - [Build decks in the team theme](#build-decks-in-the-team-theme)
 - [Workspace layout](#workspace-layout)
 - [Script reference](#script-reference)
@@ -43,6 +44,7 @@ The skills are plain `SKILL.md` instructions plus references, templates and scri
 | [conference-radar](conference-radar/SKILL.md) | standalone | Fetches a venue edition's accepted papers (ICLR, ICML, NeurIPS, CVPR, ACL, EMNLP, …, or "accepted at" arXiv preprints), finds rising terms against the previous edition, clusters papers by shared mechanism, reads the representatives and proposes idea seeds | `radar/<id>/radar.md`, `cards/` |
 | [field-atlas](field-atlas/SKILL.md) | standalone | Keeps a persistent atlas of a field from selected venues plus citation-following: papers with versions, dates, reviews, repositories and citations under provenance; overlapping facets; extraction cards on a shared ontology of problems, mechanisms, assumptions, claims and evidence. Explains development as changes with evidence of influence, keeps attention, momentum and progress apart, and proposes cross-domain transfers with compatibility checks, prior-art search and a rejection criterion | `atlas/<field>/atlas.md`, `cards/`, `atlas/hypotheses/` |
 | [ub-sched-research](ub-sched-research/SKILL.md) | standalone, domain | Researches YARN / Spark / Flink scheduling on UnifiedBus SuperPoDs of Matrix Servers: a five-layer UB ontology beside each engine's own ontology, a crosswalk showing where the engines cannot express UB concepts, ontology cards per source, a cited facts register, a gap matrix, research questions and designs that land in real engine plugin points | `ub-sched/cards/`, `matrix.md`, `questions.md`, `designs/` |
+| [code-cards](code-cards/SKILL.md) | standalone, any codebase | Keeps one short card per module (purpose, interface with `path::symbol` anchors, flow, invariants, failure modes, dependencies, gotchas, mermaid diagrams) plus a system card with a runtime view. Independent judge agents check every claim and diagram edge against the code: full line coverage, a planted canary error that tests each judge, probe questions, and several judges for complex modules. Script checks compare signatures and real imports with the card. Fingerprints find stale cards after each change; every approved card becomes a dated, commit-linked version with changelogs and release snapshots; the README architecture section is generated from the cards | `docs/cards/`, `history/`, `releases/`, README section |
 | [lit-review-deck](lit-review-deck/SKILL.md) | standalone | Reviews the last 12 months of papers, blogs and releases and builds a poster-style deck: one block per paper, figure captured from the original | `reviews/<id>/deck/*.pptx` |
 
 ```text
@@ -69,6 +71,7 @@ research-map ─▶ source-scout ──▶ source-digest ─▶ idea-alignment �
 | `conference-radar/scripts/radar.py` | standard library only (network access to the venue sites and arXiv; uses `curl` when present) |
 | `field-atlas/scripts/atlas.py` | standard library only (network access to arXiv, OpenReview, GitHub and Semantic Scholar for `dates`, `reviews`, `repos`, `cites`) |
 | `ub-sched-research/scripts/ub_sched.py` | standard library only |
+| `code-cards/scripts/cards.py` | standard library only (uses `git` when present) |
 | `lit-review-deck/scripts/poster_deck.py` | `python-pptx` |
 | `lit-review-deck/scripts/figure_grab.py` | `pymupdf`, or poppler-utils + `Pillow` |
 | `insight-ppt/scripts/make_team_template.py` | `python-pptx`, `Pillow` |
@@ -89,7 +92,7 @@ Skills are copied into the project where you work. Claude Code loads project ski
 git clone https://github.com/caokyhieu/working-skills.git
 cd working-skills
 PROJECT_DIR="/absolute/path/to/your-project"
-SKILLS="research-poc research-map stage-critic source-scout source-digest idea-alignment idea-extension bench-setup result-plots insight-ppt lit-review-deck conference-radar field-atlas ub-sched-research"
+SKILLS="research-poc research-map stage-critic source-scout source-digest idea-alignment idea-extension bench-setup result-plots insight-ppt lit-review-deck conference-radar field-atlas ub-sched-research code-cards"
 ```
 
 **Claude Code**
@@ -109,7 +112,7 @@ for s in $SKILLS; do cp -R "$s" "$PROJECT_DIR/.agents/skills/"; done
 Notes:
 
 - Copy **whole folders**. The instructions depend on each folder's `references/`, `templates/`, `scripts/` and `assets/`.
-- Always install `research-poc` with any of the research skills; they follow its workspace contract. Install `research-map` and `stage-critic` with it: alignment and scouting refuse to run without a confirmed research map, and the orchestrator runs the critic after every stage. To use only the deck skill, install `insight-ppt` by itself. `lit-review-deck` needs `insight-ppt` beside it for the team theme, and uses `source-scout` when it is installed. `conference-radar` runs on its own. `field-atlas` runs on its own but fetches venue listings with `conference-radar`'s script and follows citations with `source-scout`'s `scholar_search.py`, so install those two beside it. `ub-sched-research` runs on its own too, but cites `research-poc`'s thinking models and hands designs to `source-digest`, `idea-extension` and `bench-setup` when they are installed.
+- Always install `research-poc` with any of the research skills; they follow its workspace contract. Install `research-map` and `stage-critic` with it: alignment and scouting refuse to run without a confirmed research map, and the orchestrator runs the critic after every stage. To use only the deck skill, install `insight-ppt` by itself. `lit-review-deck` needs `insight-ppt` beside it for the team theme, and uses `source-scout` when it is installed. `conference-radar` runs on its own. `field-atlas` runs on its own but fetches venue listings with `conference-radar`'s script and follows citations with `source-scout`'s `scholar_search.py`, so install those two beside it. `code-cards` runs on its own in any code project. `ub-sched-research` runs on its own too, but cites `research-poc`'s thinking models and hands designs to `source-digest`, `idea-extension` and `bench-setup` when they are installed.
 - `agents/openai.yaml` is Codex metadata; Claude Code ignores it.
 - Restart the agent after installing. In Claude Code, skills appear as `/research-poc`, `/research-map`, `/source-scout`, `/source-digest`, `/stage-critic`, and so on. In Codex, type `/skills` or mention `$research-poc`.
 
@@ -477,6 +480,42 @@ A crosswalk links the two and labels each engine concept `exact`, `degenerate` (
 
 Hardware numbers come only from `ub-sched/facts.md`, each with a source; facts marked `internal` never go into search queries or shared material. The card builds on a source-digest when one exists, and confirmed design sketches go on to `idea-extension` and `bench-setup`.
 
+## Document AI-generated code
+
+`code-cards` keeps documentation of a fast-growing codebase short and accurate. AI-generated code is the main case: a lot of code lands quickly, and often does something slightly different from what the prompt asked for. Each module gets one card in `docs/cards/` (150-line budget): purpose, public interface with `path::symbol` anchors, main flow as numbered steps, invariants and who enforces them, failure modes as condition → behavior, config with defaults, dependencies, gotchas and tests. One system card holds the summary, a runtime view, cross-module flows, glossary, decisions and the run/test commands that were actually run.
+
+**Diagrams.** Cards carry mermaid diagrams where they say more than the steps: a `sequenceDiagram` for a module's main path (with `alt` for branches), a `stateDiagram-v2` for a lifecycle, and in the system card a runtime view (one subgraph per process, every cross-process edge labelled with its protocol) and one sequence per flow. Each node and edge line is a claim and is judged like any other. `cards.py graph <module>` prints the module's import graph from the code as a starting point, and `check` lints every block (`--render` also parses it with mermaid-cli). The rules match `tech-doc`'s mermaid rules; `insight-ppt`'s diagram styles turn the judged diagrams into slides.
+
+**Judged, not asserted.** No card is trusted on the writer's word:
+
+| Layer | Catches |
+|---|---|
+| `cards.py check` (script) | anchors that point nowhere, parameters the definition lacks, imports missing from `depends_on`, Uses / Used by disagreement, broken diagrams |
+| Claim judge (fresh agent) | every claim line, including each diagram edge, rated OK / WRONG / UNSUPPORTED with a code location; lines left without a verdict block the card |
+| Probe | questions a developer would ask, answered from the card and then from the code: finds what is missing or misleading |
+| Canary | one claim in the judge's copy is silently made wrong; a judge that misses it is rejected and replaced |
+
+The script scores each module's complexity from its code (lines, branches, error sites, concurrency markers). Complex modules get 2–4 judges, each on its own lines with its own canary. Their judges must trace call chains across files, cite both the raise site and the handler for each failure mode, and check concurrency, lifecycle, cleanup and config precedence. `stamp` refuses a card without a passing verdict for its current text and code. After a fix, only the edited lines are judged again; after a code change, every line is.
+
+**Versions.** `stamps.json` records a hash of every file a card owns. After a coding session, `status` lists the cards whose files changed and the files no card covers; the agent updates only the affected sections and has them judged again. Every stamp writes a version folder, `history/<module>/v003_2026-11-13_abc1234/`, holding the card as stamped and the judge reports that passed it. It also adds entries to the card's changelog and to the project-wide `CHANGELOG.md` (why, sections changed, code files changed, judge summary). `release <name>` freezes every card at a tag. `history <module> --diff v002 v005` shows how the description changed.
+
+`readme` regenerates a marked block in your README: the module graph, a table of modules with each card's version, and the system summary, runtime view and flows. It never touches anything outside the markers.
+
+```text
+/code-cards Document this repo: propose the module split, write and judge the cards, and add the architecture section after "Installation" in README.md.
+/code-cards I just merged the export feature. Update the stale cards, have them judged, and refresh the README.
+/code-cards Freeze the docs as release v1.2.
+```
+
+To keep docs from falling behind the code, add the two checks to CI or a pre-commit hook. Both exit 1 when the docs lag the code:
+
+```sh
+python3 .claude/skills/code-cards/scripts/cards.py status --strict
+python3 .claude/skills/code-cards/scripts/cards.py readme --check
+```
+
+During bootstrap the skill offers to add a rule to `CLAUDE.md` / `AGENTS.md`: read the card before changing a module, and update the cards afterwards. Coding agents then also use the cards as context.
+
 ## Build decks in the team theme
 
 `insight-ppt` builds editable PowerPoint decks that look like the team's research decks. It starts from [`assets/team-template.pptx`](insight-ppt/assets/team-template.pptx), whose master slide supplies the lab header, logo, "Huawei Confidential" line, page number, footer bar and title-slide artwork. [`team_deck.py`](insight-ppt/scripts/team_deck.py) adds content as native, editable shapes: cyan corner triangle, blue topic kicker, one-line red conclusion titles, grey and dark cards, red-bar callout strips, takeaway lines, stat numbers, tables and native charts.
@@ -661,6 +700,22 @@ Writes, per metric, bars with 95% CIs, a change-vs-baseline chart, a CSV, trade-
 | `init` | Create `ub-sched/` with the ontology, engine ontologies, facts register and questions (existing files are kept) |
 | `check` | Validate card front matter against the workspace `ontology.md` and `engines.md` (unknown concepts, engine terms, enums, missing level); exit 1 on problems |
 | `matrix` | Write `matrix.md`: sources × layers, UB concepts no card covers, lossy / missing crosswalk rows with the cards that touch them |
+
+**Code cards**: `code-cards/scripts/cards.py [--root DIR] [--cards docs/cards] <command>` (standard library)
+
+| Command | Purpose |
+|---|---|
+| `init [--write]` | Create `docs/cards/` with `config.json` and `_system.md`, propose one module per top-level package; `--write` adds skeleton cards (existing cards are kept) |
+| `status [--strict]` | Per card `ok`, `stale` (owned files changed since stamp), `edited` (card text changed), `unstamped` or `no-files`; uncovered and double-owned source files; `--strict` exits 1 on any problem |
+| `diff <module>` | Files changed, added and removed since the card's stamp, with `git diff --stat` against the stamp commit |
+| `check [modules] [--render]` | Lint: required sections, anchors resolve, Interface parameters exist in the definition, static imports vs `depends_on`, Uses / Used by agree, mermaid structure (`--render`: parse with `mmdc`), leftover `TBD`, vague words, line budget; exit 1 on errors |
+| `graph [module]` | Mermaid of a module's file-level imports (Python, JS/TS, Java/Kotlin), or of all modules from `depends_on` |
+| `judge <module> [--self] [--shards N] [--full]` | Complexity tier → one prompt per judge with its claim lines and a planted canary, in `verify/<module>/`; unchanged lines judged OK carry over when the code is unchanged |
+| `verdict <module> [--waive ID=reason]` | Grade the reports: prep id, full line coverage, canary caught, a code location for every OK, trace depth for complex modules, findings → PASS or FAIL |
+| `stamp <modules> \| --all [--note TEXT]` | Record file hashes and commit; write `history/<module>/vNNN_<date>_<commit>/` (card + judge evidence) and changelog entries; refused without a passing `check` and verdict (`--force` records `forced`) |
+| `history [module] [--diff vA [vB]]` | Project changelog, a card's versions, or the diff between two versions (default: against current) |
+| `release <name> [--note TEXT] [--force]` | Freeze every current card into `releases/<name>/` with `MANIFEST.md`; refused while a card is stale or unjudged |
+| `readme [--readme PATH] [--insert-after HEADING] [--check]` | Write the generated section between `<!-- code-cards:start -->` and `<!-- code-cards:end -->`; `--check` prints the diff and exits 1 if the README is behind the cards |
 
 **Review decks**: `lit-review-deck/scripts/poster_deck.py <blocks.json> --out <deck.pptx> [--team-deck PATH]`
 Builds the poster deck (title, contents, legend, theme slides, also-worth-reading, next steps, sources) and writes `sources.md` beside it.

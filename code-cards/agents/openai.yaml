@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Cards"
+  short_description: "Keep short, code-checked cards per module in sync with fast-growing code and generate the README architecture section"
+  default_prompt: "Use $code-cards to check which module cards are out of date after my last changes, update them and refresh the README section."
