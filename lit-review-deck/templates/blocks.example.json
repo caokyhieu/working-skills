@@ -1,0 +1,88 @@
+{
+  "review_id": "q3-2026-query-optimization",
+  "title": "What changed in learned query optimization",
+  "subtitle": "12 papers and releases, Oct 2025 - Sep 2026",
+  "kicker": "Literature Review: Query Optimization",
+  "window": "2025-10-01 - 2026-09-17",
+  "presenters": ["<Your Name>"],
+  "team": "Intelligent Data Team",
+  "contents": true,
+  "legend": true,
+  "sources": true,
+  "themes": [
+    {
+      "id": "T1",
+      "name": "Cardinality estimation",
+      "title": "Estimators moved from models to feedback loops",
+      "tagline": "Three independent groups, same correction: learn from executed plans",
+      "intro_takeaway": ["Feedback beats bigger models.", "All three wins came from execution signal, not model size."],
+      "papers": [
+        {
+          "id": "leis2026-lc",
+          "title": "Feedback-driven cardinality estimation for join queries",
+          "slide_title": "Feedback-driven cardinality estimation",
+          "one_line": "corrects estimates from executed plans, no retraining",
+          "authors": "Leis et al. (TUM, Snowflake)",
+          "venue": "SIGMOD 2026",
+          "date": "2026-06",
+          "url": "https://example.org/abs/0000.00000",
+          "tags": ["PEER-REVIEWED", "CODE"],
+          "headline": ["2.1x lower p99", "vs PostgreSQL 17 on JOB, 113 queries (Table 4)"],
+          "figures": [
+            {"path": "papers/leis2026-lc/figures/fig2-architecture.png",
+             "caption": "Fig. 2 - feedback loop architecture; Leis et al., SIGMOD 2026", "section": "method"},
+            {"path": "papers/leis2026-lc/figures/fig5-latency.png",
+             "caption": "Fig. 5 - p99 latency on JOB; Leis et al., SIGMOD 2026", "section": "results"}
+          ],
+          "problem": "Independence assumptions make join estimates compound their error across the plan, and a retrained model is stale by the time it ships.",
+          "idea": "Treat the optimizer as a control loop: every executed plan already measures true cardinalities, so correct the estimator from that signal instead of learning the data distribution up front.",
+          "method": [
+            "Logs actual row counts per plan node at execution time",
+            "Keys corrections by join-predicate signature, not by query text",
+            "Applies a multiplicative correction at estimation time; no retraining step",
+            "Falls back to the histogram estimate when a signature is unseen"
+          ],
+          "contributions": [
+            ["Signature keying", "generalizes corrections across queries touching the same joins"],
+            ["Bounded drift", "correction decays so stale signal cannot dominate"],
+            ["Open implementation", "patch against PostgreSQL 17, scripts for JOB and CEB"]
+          ],
+          "results": [
+            ["2.1x lower p99 latency", "vs PostgreSQL 17 on JOB, 113 queries (Table 4)"],
+            ["q-error median 1.4 vs 9.8", "vs the built-in estimator on CEB (Fig. 5)"],
+            ["<0.3% estimation overhead", "measured at 10k queries/s (Section 6.3)"]
+          ],
+          "strengths": [
+            "Baselines were tuned, and the tuning is written down (Appendix B)",
+            "Correction needs no offline training set, so cold start is the current behaviour",
+            "Ablation separates the signature keying from the decay term"
+          ],
+          "limitations": [
+            "No result on update-heavy workloads; all benchmarks are read-only",
+            "Single hardware configuration",
+            "[inference] our write rate may invalidate corrections faster than they decay"
+          ],
+          "for_us": "Optimizer latency (P1): it replaces the histogram estimator we already isolate behind one interface, so a trial is a swap, not a rewrite.",
+          "takeaway": ["Closest thing to a drop-in win in this review.", "One interface, public patch, tuned baselines."],
+          "notes": [
+            "How it works: corrections are stored in a bounded LRU keyed by join signature; a decay factor halves a correction every N executions.",
+            "Baselines: PostgreSQL 17 with default and with tuned statistics targets; both reported.",
+            "Cost to try here: one week to port the patch, benchmark data already in the lake.",
+            "Relation to the other two papers in this theme: same signal, different placement."
+          ]
+        }
+      ]
+    }
+  ],
+  "also_worth_reading": [
+    {"title": "Learned index structures for time-series stores", "cite": "arXiv, 2026-05",
+     "why": "cut: no code, and our access pattern is not time-ordered"}
+  ],
+  "next_steps": {
+    "title": "Read, try, watch",
+    "read": ["Leis et al. Section 5 (feedback loop)", "DuckDB v1.5 release notes"],
+    "try": ["Reproduce Leis on JOB against our fork", "Replay ClickBench Q9 at our memory limit"],
+    "watch": ["Whether the feedback loop survives high update rates"],
+    "takeaway": ["One candidate is ready for a POC.", "Leis et al. plugs into an interface we already own."]
+  }
+}
