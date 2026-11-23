@@ -1,0 +1,25 @@
+{
+  "_template": {"use": "Code-level view: which packages/modules import which (generated draft: sysdiag.py scan REPO --spec-out)", "swap": "Merge tiny modules, cut utilities everyone imports (mention them in a note), keep <= 15 nodes; ranks layout puts callers left"},
+  "title": "Module dependencies",
+  "subtitle": "arrow = imports; utils/ and config/ omitted (imported everywhere)",
+  "direction": "LR",
+  "root": {"id": "mods", "layout": "ranks", "role": "none", "gap": 28, "rank_gap": 100, "children": [
+    {"id": "cli", "label": "cli", "sub": "4 files", "role": "component"},
+    {"id": "server", "label": "server", "sub": "9 files", "role": "component"},
+    {"id": "planner", "label": "planner", "sub": "12 files", "role": "compute"},
+    {"id": "exec", "label": "executor", "sub": "15 files", "role": "focus"},
+    {"id": "catalog", "label": "catalog", "sub": "6 files", "role": "catalog"},
+    {"id": "storage", "label": "storage", "sub": "8 files", "role": "store", "shape": "rect"},
+    {"id": "flight", "label": "flight", "sub": "5 files", "role": "client"}
+  ]},
+  "edges": [
+    {"from": "cli", "to": "server"},
+    {"from": "server", "to": "planner"},
+    {"from": "server", "to": "flight"},
+    {"from": "planner", "to": "catalog"},
+    {"from": "planner", "to": "exec"},
+    {"from": "exec", "to": "storage"},
+    {"from": "exec", "to": "catalog"},
+    {"from": "flight", "to": "exec"}
+  ]
+}

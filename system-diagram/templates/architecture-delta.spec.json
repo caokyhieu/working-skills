@@ -1,0 +1,119 @@
+{
+ "_template": {
+  "use": "Before vs after a change in topology (migration, refactor, proposal); added = green, removed = red dashed",
+  "swap": "Same node ids suffixed _b/_a; keep both panels the same size; list the changes in a note"
+ },
+ "title": "Replace Druid broker path with Flight SQL",
+ "direction": "LR",
+ "root": {
+  "id": "root",
+  "layout": "row",
+  "gap": 80,
+  "align": "stretch",
+  "children": [
+   {
+    "id": "before",
+    "title": "Before",
+    "role": "zone",
+    "layout": "row",
+    "gap": 100,
+    "align": "center",
+    "w": 600,
+    "children": [
+     {
+      "id": "sr_b",
+      "label": "StarRocks",
+      "role": "client"
+     },
+     {
+      "id": "mid_b",
+      "role": "none",
+      "layout": "column",
+      "gap": 60,
+      "children": [
+       {
+        "id": "broker_b",
+        "label": "Druid Broker",
+        "sub": "HTTP / JSON",
+        "role": "removed"
+       },
+       {
+        "id": "hist_b",
+        "label": "Historical",
+        "role": "compute"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "after",
+    "title": "After",
+    "role": "zone",
+    "layout": "row",
+    "gap": 100,
+    "align": "center",
+    "w": 600,
+    "children": [
+     {
+      "id": "sr_a",
+      "label": "StarRocks",
+      "role": "client"
+     },
+     {
+      "id": "mid_a",
+      "role": "none",
+      "layout": "column",
+      "gap": 60,
+      "children": [
+       {
+        "id": "agent_a",
+        "label": "Query Serving Agent",
+        "sub": "Flight SQL",
+        "role": "added"
+       },
+       {
+        "id": "hist_a",
+        "label": "Historical",
+        "sub": "+ Flight SQL server",
+        "role": "compute"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "edges": [
+  {
+   "from": "sr_b",
+   "to": "broker_b",
+   "label": "HTTP"
+  },
+  {
+   "from": "broker_b",
+   "to": "hist_b",
+   "label": "JSON"
+  },
+  {
+   "from": "sr_a",
+   "to": "agent_a",
+   "label": "ADBC"
+  },
+  {
+   "from": "agent_a",
+   "to": "hist_a",
+   "label": "SQL",
+   "back": "Arrow"
+  }
+ ],
+ "notes": [
+  {
+   "text": "Changes: (1) broker removed from read path  (2) agent added, unions partitions  (3) JSON -> Arrow, no row re-encoding",
+   "near": "root",
+   "pos": "below",
+   "gap": 24,
+   "w": 900
+  }
+ ]
+}

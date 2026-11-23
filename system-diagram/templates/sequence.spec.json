@@ -1,0 +1,22 @@
+{
+  "_template": {"use": "Time-ordered messages between processes: handshakes, retries, partitioned reads", "swap": "4-6 actors, <= 14 messages; returns dashed; group phases with dividers"},
+  "kind": "sequence",
+  "title": "Partitioned read over Arrow Flight",
+  "actors": [
+    {"id": "sr", "label": "StarRocks", "role": "client"},
+    {"id": "agent", "label": "Query Serving Agent", "role": "agent"},
+    {"id": "h1", "label": "Historical 1", "sub": "Flight SQL :8000", "role": "compute"},
+    {"id": "h2", "label": "Historical 2", "sub": "Flight SQL :8000", "role": "compute"}
+  ],
+  "messages": [
+    {"from": "sr", "to": "agent", "label": "ADBC execute(sql)", "step": 1},
+    {"from": "agent", "to": "agent", "label": "plan: 2 partitions"},
+    {"divider": "in parallel"},
+    {"from": "agent", "to": "h1", "label": "GetFlightInfo(sql)", "label_style": "pill", "step": 2},
+    {"from": "agent", "to": "h2", "label": "GetFlightInfo(sql)", "label_style": "pill", "step": 3},
+    {"from": "h1", "to": "agent", "label": "Arrow stream", "type": "return"},
+    {"from": "h2", "to": "agent", "label": "Arrow stream", "type": "return"},
+    {"note": "UNION of partition streams", "over": ["agent"]},
+    {"from": "agent", "to": "sr", "label": "record batches", "type": "return", "step": 4}
+  ]
+}

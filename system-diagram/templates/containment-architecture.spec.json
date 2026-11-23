@@ -1,0 +1,89 @@
+{
+  "_template": {
+    "use": "Processes/hosts that contain servers that contain components; fan-out to partitions; request/response wires with protocol pills (the design.JPG look)",
+    "swap": "Rename ids/labels; keep the left-to-right reading order: caller -> orchestrator -> workers/hosts. One zone per host, one service per server process."
+  },
+  "title": "Federated query: StarRocks over Druid via Arrow Flight",
+  "direction": "LR",
+  "root": {
+    "id": "root", "layout": "row", "gap": 110, "align": "stretch",
+    "children": [
+      {"id": "left", "layout": "column", "role": "none", "gap": 70, "align": "center", "align_self": "center", "children": [
+        {"id": "gauss", "label": "GaussDB", "sub": "Relational Data", "role": "external"},
+        {"id": "starrocks", "label": "StarRocks", "role": "brand"}
+      ]},
+      {"id": "agent", "title": "Query Serving Agent", "role": "agent", "layout": "row", "align": "stretch", "gap": 40, "pad": 20, "children": [
+        {"id": "fss", "title": "Apache Flight SQL\nServer", "role": "service", "layout": "column", "justify": "center", "pad": 12, "children": [
+          {"id": "execution", "label": "Execution", "role": "component", "round": false, "w": 104}
+        ]},
+        {"id": "union", "role": "lane", "layout": "column", "w": 64, "children": []},
+        {"id": "parts", "role": "none", "layout": "column", "pad": 0, "gap": 150, "justify": "space-between", "children": [
+          {"id": "c1", "label": "Flight SQL Client", "role": "client", "w": 150, "h": 64},
+          {"id": "c2", "label": "Flight SQL Client", "role": "client", "w": 150, "h": 64},
+          {"id": "c3", "label": "Druid HTTP Client", "role": "client", "w": 150, "h": 64}
+        ]}
+      ]},
+      {"id": "hosts", "role": "none", "layout": "column", "gap": 50, "align": "start", "children": [
+        {"id": "hn1", "title": "Druid # Historical Node 1 - 0.0.0.0", "role": "zone", "layout": "column", "gap": 36, "align": "center", "children": [
+          {"id": "fss1", "title": "Apache Flight SQL Server", "role": "service", "layout": "column", "gap": 14, "pad": 16, "children": [
+            {"id": "hn1_ctl", "role": "none", "layout": "row", "gap": 14, "pad": 0, "children": [
+              {"id": "auth", "label": "Authentication", "role": "control", "w": 180},
+              {"id": "pool", "label": "Concurrent Task Pool", "role": "control", "w": 180}
+            ]},
+            {"id": "hn1_exec", "role": "none", "layout": "row", "gap": 34, "pad": 0, "children": [
+              {"id": "reader", "label": "Druid Segment Reader", "role": "compute"},
+              {"id": "jni", "label": "JNI Bridge", "role": "compute"},
+              {"id": "df1", "label": "Datafusion 36", "role": "compute"}
+            ]}
+          ]},
+          {"id": "hn1_cat", "role": "none", "layout": "row", "pad": 0, "w": 480, "justify": "end", "children": [
+            {"id": "cat1", "label": "Local Table Catalog", "role": "catalog"}
+          ]},
+          {"id": "seg1", "title": "Segment Folder", "role": "default", "round": false, "layout": "column", "pad": 14, "children": [
+            {"id": "files1", "label": "Segment Files on SSD", "role": "data"}
+          ]}
+        ]},
+        {"id": "hn2", "title": "Druid # Historical Node 2 - 0.0.0.1", "role": "zone", "layout": "column", "gap": 22, "align": "center", "children": [
+          {"id": "fss2", "title": "Apache Flight SQL Server", "role": "service", "layout": "column", "pad": 14, "children": [
+            {"id": "df2", "label": "Datafusion 36", "role": "compute"}
+          ]},
+          {"id": "cat2", "label": "Local Table Catalog", "role": "catalog"},
+          {"id": "seg2", "title": "Segment Folder", "role": "default", "round": false, "layout": "column", "pad": 14, "children": [
+            {"id": "files2", "label": "Segment Files on SSD", "role": "data"}
+          ]}
+        ]},
+        {"id": "broker", "title": "Druid # Broker - 0.0.0.2", "role": "zone", "layout": "column", "gap": 18, "children": [
+          {"id": "http", "label": "HTTP Server", "role": "component", "w": 200},
+          {"id": "mem", "label": "Mutable Segment Files on Memory", "role": "component", "w": 200}
+        ]}
+      ]}
+    ]
+  },
+  "edges": [
+    {"from": "starrocks", "to": "gauss", "label": "ODBC/JDBC"},
+    {"from": "starrocks", "to": "execution", "label": "ADBC"},
+    {"from": "execution", "to": "union", "label": "UNION", "head": "none"},
+    {"from": "union", "to": "c1", "route": "straight", "from_port": 0.5, "head": "none"},
+    {"from": "union", "to": "c2", "route": "straight", "from_port": 0.5, "head": "none"},
+    {"from": "union", "to": "c3", "route": "straight", "from_port": 0.5, "head": "none"},
+    {"from": "agent", "to": "flighttable"},
+    {"from": "c1", "to": "fss1", "label": "SQL", "back": "Arrow Stream"},
+    {"from": "c2", "to": "fss2", "label": "SQL", "back": "Arrow Stream"},
+    {"from": "c3", "to": "broker", "label": "HTTP", "back": "JSON Stream"},
+    {"from": "reader", "to": "jni"},
+    {"from": "jni", "to": "df1"},
+    {"from": "seg1", "to": "reader", "label": "Accessing Segments to Read", "label_style": "text", "to_side": "bottom", "from_side": "top", "from_port": 0.3},
+    {"from": "seg1", "to": "cat1", "label": "Discover table paths", "label_style": "text", "from_side": "top", "to_side": "bottom", "from_port": 0.82},
+    {"from": "cat1", "to": "df1"},
+    {"from": "seg2", "to": "cat2", "label": "Discover table paths", "label_style": "text"},
+    {"from": "cat2", "to": "df2"}
+  ],
+  "notes": [
+    {"id": "flighttable", "text": "FlightTable(nodes= \"0.0.0.0:8000;0.0.0.1:8000\")", "near": "agent", "pos": "above", "gap": 40, "w": 420},
+    {"text": "Partition 1", "near": "c1", "pos": "below", "gap": 14},
+    {"text": "Partition 2", "near": "c2", "pos": "above", "gap": 14},
+    {"text": "Partition 3", "near": "c3", "pos": "above", "gap": 14},
+    {"text": "In Datafusion, we handle concurrent read with a 2 partition FlightReaderExec, same logic can be applied in StarRocks", "near": "c1", "pos": "below-left", "gap": 44, "w": 200, "size": 12},
+    {"text": "Simplified", "near": "hn2", "pos": "right", "gap": 14}
+  ]
+}

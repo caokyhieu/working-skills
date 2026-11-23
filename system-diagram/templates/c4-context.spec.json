@@ -1,0 +1,24 @@
+{
+  "_template": {"use": "System context (C4 level 1): the system as one box, the people who use it and the systems it talks to", "swap": "Exactly one focus box (your system); people left, external systems right/below; edges say what flows, in words"},
+  "title": "Query platform — system context",
+  "direction": "LR",
+  "root": {"id": "root", "layout": "row", "gap": 120, "align": "center", "children": [
+    {"id": "people", "role": "none", "layout": "column", "gap": 40, "children": [
+      {"id": "analyst", "label": "Data analyst", "sub": "writes SQL", "role": "actor"},
+      {"id": "app", "label": "BI dashboard", "sub": "Superset", "role": "actor"}
+    ]},
+    {"id": "system", "label": "Query Platform", "sub": "federates OLAP + time-series", "role": "focus", "w": 240, "h": 120},
+    {"id": "ext", "role": "none", "layout": "column", "gap": 30, "children": [
+      {"id": "druid", "label": "Apache Druid", "sub": "segments on SSD", "role": "external"},
+      {"id": "gauss", "label": "GaussDB", "sub": "relational data", "role": "external"},
+      {"id": "idp", "label": "Identity provider", "sub": "LDAP / OIDC", "role": "external"}
+    ]}
+  ]},
+  "edges": [
+    {"from": "analyst", "to": "system", "label": "SQL", "label_style": "chip"},
+    {"from": "app", "to": "system", "label": "JDBC", "label_style": "chip"},
+    {"from": "system", "to": "druid", "label": "Arrow Flight", "label_style": "chip"},
+    {"from": "system", "to": "gauss", "label": "ODBC", "label_style": "chip"},
+    {"from": "system", "to": "idp", "label": "auth", "type": "control", "label_style": "text"}
+  ]
+}

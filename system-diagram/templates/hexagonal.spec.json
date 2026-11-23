@@ -1,0 +1,29 @@
+{
+  "_template": {"use": "Inside one service: inbound adapters -> application core -> outbound ports/adapters (ports & adapters, clean architecture)", "swap": "Inbound left, outbound right, domain in the middle; only the core is focus-worthy"},
+  "title": "query-agent internals",
+  "direction": "LR",
+  "root": {"id": "root", "layout": "row", "gap": 80, "align": "center", "children": [
+    {"id": "inbound", "title": "Inbound adapters", "role": "lane", "layout": "column", "gap": 20, "children": [
+      {"id": "flight_srv", "label": "Flight SQL server", "sub": "do_get / get_flight_info", "role": "client"},
+      {"id": "admin_http", "label": "Admin HTTP", "sub": "/health /metrics", "role": "client"}
+    ]},
+    {"id": "core", "title": "Application core", "role": "service", "layout": "column", "gap": 20, "children": [
+      {"id": "planner", "label": "Planner", "sub": "split into partitions", "role": "compute"},
+      {"id": "union", "label": "UnionExec", "sub": "merge streams", "role": "compute"},
+      {"id": "policy", "label": "Auth policy", "role": "control"}
+    ]},
+    {"id": "outbound", "title": "Outbound adapters", "role": "lane", "layout": "column", "gap": 20, "children": [
+      {"id": "flight_cli", "label": "Flight client pool", "role": "client"},
+      {"id": "druid_http", "label": "Druid HTTP client", "role": "client"},
+      {"id": "cat", "label": "Catalog cache", "role": "catalog"}
+    ]}
+  ]},
+  "edges": [
+    {"from": "flight_srv", "to": "planner"},
+    {"from": "admin_http", "to": "policy", "type": "control"},
+    {"from": "planner", "to": "union"},
+    {"from": "union", "to": "flight_cli"},
+    {"from": "union", "to": "druid_http"},
+    {"from": "planner", "to": "cat"}
+  ]
+}

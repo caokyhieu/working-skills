@@ -1,0 +1,38 @@
+{
+  "_template": {"use": "Stacked tiers (clients / edge / services / data); who may call whom is top-down", "swap": "One band per tier; keep 2-5 nodes per band; cross-tier calls only go downward"},
+  "title": "Web platform — layered view",
+  "direction": "TB",
+  "root": {"id": "root", "layout": "column", "gap": 28, "align": "stretch", "children": [
+    {"id": "l_clients", "title": "Clients", "title_pos": "top-left", "role": "lane", "layout": "row", "gap": 40, "justify": "center", "children": [
+      {"id": "web", "label": "Web App", "sub": "React SPA", "role": "actor", "shape": "rect"},
+      {"id": "mobile", "label": "Mobile App", "sub": "iOS / Android", "role": "actor", "shape": "rect"},
+      {"id": "partner", "label": "Partner API", "sub": "OAuth2 client", "role": "external"}
+    ]},
+    {"id": "l_edge", "title": "Edge", "title_pos": "top-left", "role": "lane", "layout": "row", "gap": 40, "justify": "center", "children": [
+      {"id": "cdn", "label": "CDN", "role": "component"},
+      {"id": "gw", "label": "API Gateway", "sub": "auth, rate limit", "role": "control"}
+    ]},
+    {"id": "l_svc", "title": "Services", "title_pos": "top-left", "role": "service", "layout": "row", "gap": 40, "justify": "center", "children": [
+      {"id": "orders", "label": "Orders", "sub": "orders-svc :8081", "role": "compute"},
+      {"id": "users", "label": "Users", "sub": "users-svc :8082", "role": "compute"},
+      {"id": "search", "label": "Search", "sub": "search-svc :8083", "role": "compute"}
+    ]},
+    {"id": "l_data", "title": "Data", "title_pos": "top-left", "role": "lane", "layout": "row", "gap": 40, "justify": "center", "children": [
+      {"id": "pg", "label": "PostgreSQL", "role": "store"},
+      {"id": "redis", "label": "Redis", "sub": "sessions", "role": "catalog"},
+      {"id": "es", "label": "OpenSearch", "role": "store"}
+    ]}
+  ]},
+  "edges": [
+    {"from": "web", "to": "cdn", "label": "HTTPS"},
+    {"from": "mobile", "to": "gw", "label": "HTTPS"},
+    {"from": "partner", "to": "gw", "label": "OAuth2"},
+    {"from": "cdn", "to": "gw"},
+    {"from": "gw", "to": "orders", "label": "gRPC"},
+    {"from": "gw", "to": "users", "label": "gRPC"},
+    {"from": "gw", "to": "search", "label": "gRPC"},
+    {"from": "orders", "to": "pg", "label": "SQL"},
+    {"from": "users", "to": "redis"},
+    {"from": "search", "to": "es"}
+  ]
+}

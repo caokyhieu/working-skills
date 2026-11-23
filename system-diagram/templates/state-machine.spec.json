@@ -1,0 +1,103 @@
+{
+ "_template": {
+  "use": "Lifecycle of one thing (job, order, connection): states, transitions with events/guards, terminal states",
+  "swap": "States = role state, terminal = ellipse; transition labels are event[guard]; mark retry loops with rank_ignore"
+ },
+ "title": "Query job lifecycle",
+ "direction": "LR",
+ "root": {
+  "id": "sm",
+  "layout": "ranks",
+  "role": "none",
+  "gap": 40,
+  "rank_gap": 110,
+  "children": [
+   {
+    "id": "start",
+    "label": "",
+    "role": "terminal",
+    "w": 28,
+    "h": 28
+   },
+   {
+    "id": "queued",
+    "label": "QUEUED",
+    "role": "state"
+   },
+   {
+    "id": "planning",
+    "label": "PLANNING",
+    "role": "state"
+   },
+   {
+    "id": "running",
+    "label": "RUNNING",
+    "role": "state"
+   },
+   {
+    "id": "done",
+    "label": "FINISHED",
+    "role": "added"
+   },
+   {
+    "id": "failed",
+    "label": "FAILED",
+    "role": "removed",
+    "style": "solid"
+   },
+   {
+    "id": "cancelled",
+    "label": "CANCELLED",
+    "role": "state",
+    "rank": 2
+   }
+  ]
+ },
+ "edges": [
+  {
+   "from": "start",
+   "to": "queued"
+  },
+  {
+   "from": "queued",
+   "to": "planning",
+   "label": "slot free",
+   "label_style": "text"
+  },
+  {
+   "from": "planning",
+   "to": "running",
+   "label": "plan ok",
+   "label_style": "text"
+  },
+  {
+   "from": "running",
+   "to": "done",
+   "label": "all partitions",
+   "label_style": "text"
+  },
+  {
+   "from": "running",
+   "to": "failed",
+   "label": "error [retries=3]",
+   "label_style": "text"
+  },
+  {
+   "from": "running",
+   "to": "queued",
+   "label": "retry",
+   "label_style": "text",
+   "rank_ignore": true,
+   "type": "control",
+   "from_side": "top",
+   "to_side": "top"
+  },
+  {
+   "from": "queued",
+   "to": "cancelled",
+   "label": "cancel()",
+   "label_style": "text",
+   "rank_ignore": true
+  }
+ ]
+}

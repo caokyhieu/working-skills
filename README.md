@@ -21,6 +21,7 @@ The skills are plain `SKILL.md` instructions plus references, templates and scri
 - [Map a field and find transfers](#map-a-field-and-find-transfers)
 - [Research schedulers for UnifiedBus SuperPoDs](#research-schedulers-for-unifiedbus-superpods)
 - [Document AI-generated code](#document-ai-generated-code)
+- [Draw system diagrams](#draw-system-diagrams)
 - [Build decks in the team theme](#build-decks-in-the-team-theme)
 - [Workspace layout](#workspace-layout)
 - [Script reference](#script-reference)
@@ -45,6 +46,7 @@ The skills are plain `SKILL.md` instructions plus references, templates and scri
 | [field-atlas](field-atlas/SKILL.md) | standalone | Keeps a persistent atlas of a field from selected venues plus citation-following: papers with versions, dates, reviews, repositories and citations under provenance; overlapping facets; extraction cards on a shared ontology of problems, mechanisms, assumptions, claims and evidence. Explains development as changes with evidence of influence, keeps attention, momentum and progress apart, and proposes cross-domain transfers with compatibility checks, prior-art search and a rejection criterion | `atlas/<field>/atlas.md`, `cards/`, `atlas/hypotheses/` |
 | [ub-sched-research](ub-sched-research/SKILL.md) | standalone, domain | Researches YARN / Spark / Flink scheduling on UnifiedBus SuperPoDs of Matrix Servers: a five-layer UB ontology beside each engine's own ontology, a crosswalk showing where the engines cannot express UB concepts, ontology cards per source, a cited facts register, a gap matrix, research questions and designs that land in real engine plugin points | `ub-sched/cards/`, `matrix.md`, `questions.md`, `designs/` |
 | [code-cards](code-cards/SKILL.md) | standalone, any codebase | Keeps one short card per module (purpose, interface with `path::symbol` anchors, flow, invariants, failure modes, dependencies, gotchas, mermaid diagrams) plus a system card with a runtime view. Independent judge agents check every claim and diagram edge against the code: full line coverage, a planted canary error that tests each judge, probe questions, and several judges for complex modules. Script checks compare signatures and real imports with the card. Fingerprints find stale cards after each change; every approved card becomes a dated, commit-linked version with changelogs and release snapshots; the README architecture section is generated from the cards | `docs/cards/`, `history/`, `releases/`, README section |
+| [system-diagram](system-diagram/SKILL.md) | standalone, any codebase or idea | Draws system and architecture diagrams as editable Excalidraw files in the `design.JPG` look (hosts ⊃ server processes ⊃ components, request/response wires with protocol pills). Reads a codebase (scan of entry points, servers, clients, compose/k8s, imports; every box and wire carries `path::symbol` evidence) or an idea; 15 templates from containment architecture to sequence, deployment, data pipeline, state machine and before/after; a compiler does layout, orthogonal routing and lint, and Excalidraw itself renders the PNG/SVG for visual review | `docs/diagrams/<name>.excalidraw`, `.png`, `.svg`, `.evidence.md` |
 | [lit-review-deck](lit-review-deck/SKILL.md) | standalone | Reviews the last 12 months of papers, blogs and releases and builds a poster-style deck: one block per paper, figure captured from the original | `reviews/<id>/deck/*.pptx` |
 
 ```text
@@ -92,7 +94,7 @@ Skills are copied into the project where you work. Claude Code loads project ski
 git clone https://github.com/caokyhieu/working-skills.git
 cd working-skills
 PROJECT_DIR="/absolute/path/to/your-project"
-SKILLS="research-poc research-map stage-critic source-scout source-digest idea-alignment idea-extension bench-setup result-plots insight-ppt lit-review-deck conference-radar field-atlas ub-sched-research code-cards"
+SKILLS="research-poc research-map stage-critic source-scout source-digest idea-alignment idea-extension bench-setup result-plots insight-ppt lit-review-deck conference-radar field-atlas ub-sched-research code-cards system-diagram"
 ```
 
 **Claude Code**
@@ -112,7 +114,7 @@ for s in $SKILLS; do cp -R "$s" "$PROJECT_DIR/.agents/skills/"; done
 Notes:
 
 - Copy **whole folders**. The instructions depend on each folder's `references/`, `templates/`, `scripts/` and `assets/`.
-- Always install `research-poc` with any of the research skills; they follow its workspace contract. Install `research-map` and `stage-critic` with it: alignment and scouting refuse to run without a confirmed research map, and the orchestrator runs the critic after every stage. To use only the deck skill, install `insight-ppt` by itself. `lit-review-deck` needs `insight-ppt` beside it for the team theme, and uses `source-scout` when it is installed. `conference-radar` runs on its own. `field-atlas` runs on its own but fetches venue listings with `conference-radar`'s script and follows citations with `source-scout`'s `scholar_search.py`, so install those two beside it. `code-cards` runs on its own in any code project. `ub-sched-research` runs on its own too, but cites `research-poc`'s thinking models and hands designs to `source-digest`, `idea-extension` and `bench-setup` when they are installed.
+- Always install `research-poc` with any of the research skills; they follow its workspace contract. Install `research-map` and `stage-critic` with it: alignment and scouting refuse to run without a confirmed research map, and the orchestrator runs the critic after every stage. To use only the deck skill, install `insight-ppt` by itself. `lit-review-deck` needs `insight-ppt` beside it for the team theme, and uses `source-scout` when it is installed. `conference-radar` runs on its own. `field-atlas` runs on its own but fetches venue listings with `conference-radar`'s script and follows citations with `source-scout`'s `scholar_search.py`, so install those two beside it. `code-cards` and `system-diagram` run on their own in any code project. `ub-sched-research` runs on its own too, but cites `research-poc`'s thinking models and hands designs to `source-digest`, `idea-extension` and `bench-setup` when they are installed.
 - `agents/openai.yaml` is Codex metadata; Claude Code ignores it.
 - Restart the agent after installing. In Claude Code, skills appear as `/research-poc`, `/research-map`, `/source-scout`, `/source-digest`, `/stage-critic`, and so on. In Codex, type `/skills` or mention `$research-poc`.
 
@@ -516,6 +518,24 @@ python3 .claude/skills/code-cards/scripts/cards.py readme --check
 
 During bootstrap the skill offers to add a rule to `CLAUDE.md` / `AGENTS.md`: read the card before changing a module, and update the cards afterwards. Coding agents then also use the cards as context.
 
+## Draw system diagrams
+
+`system-diagram` draws a system the way `design.JPG` (repo root) does: hosts as grey boxes, each server process as a hatched blue box inside its host, components as pastel boxes inside that, and wires labelled with what travels on them (purple `SQL` / `Arrow Stream` pills for request/response pairs). The output is a real `.excalidraw` file people keep editing (excalidraw.com, the VS Code extension, Obsidian), plus PNG and SVG for docs and slides.
+
+The agent never hand-writes Excalidraw JSON. It writes a short JSON **spec** — groups that nest, nodes with semantic roles, edges with protocol labels, notes — and `sysdiag.py build` compiles it: layout (row, column, grid, auto-ranked layers, free), orthogonal routing that avoids boxes, fanned ports, parallel request/response pairs, label placement, arrows bound to shapes, and a lint pass (overlaps, wires through boxes, label collisions, shared runs, too many focus nodes, too many nodes). `render.py` renders the file with Excalidraw's own exporter (Playwright + headless Chromium), and the agent looks at the PNG and fixes the spec until it reads cleanly.
+
+**From a codebase.** `sysdiag.py scan` lists runtime units (compose services, Dockerfiles, k8s objects), entry points, integration hints (HTTP/gRPC/Flight servers and clients, ADBC/JDBC/ODBC, SQL drivers, Kafka and queues, engines, JNI/FFI, thread pools), endpoint literals, config names and the module import graph. Those are places to read, not facts: the agent reads the entry points and wiring code, writes `model.md` (runtime units, components, connections with protocol and direction, each with `path::symbol`), then draws. With `--require-evidence` every node and edge must carry `ev` or be marked `assumed`; `<name>.evidence.md` lists the evidence beside the picture. `scan --spec-out` also drafts a module-dependency diagram (importers left, import cycles dashed).
+
+**From an idea.** The agent restates the idea as the same model, marks everything `assumed`, draws components that do not exist yet as `planned` (dashed), and uses the before/after template when the idea changes an existing system.
+
+**Templates** (`system-diagram/templates/`, previews in `templates/previews/`): containment architecture, layered, request flow, sequence, data pipeline, deployment, module dependency, event-driven, C4 context, architecture delta, state machine, ER model, hexagonal internals, control/data plane, swimlane. All colours and fonts live in `assets/theme.json`; a spec can override them, or `"style": "sketch"` switches to hand-drawn strokes.
+
+```text
+/system-diagram Draw the architecture of this repo: what runs where and what talks to what. Then a sequence of the query hot path.
+/system-diagram Sketch this idea: a query agent that unions Arrow Flight streams from every Druid historical, with StarRocks calling it over ADBC.
+/system-diagram Before/after diagram for replacing the broker path with Flight SQL.
+```
+
 ## Build decks in the team theme
 
 `insight-ppt` builds editable PowerPoint decks that look like the team's research decks. It starts from [`assets/team-template.pptx`](insight-ppt/assets/team-template.pptx), whose master slide supplies the lab header, logo, "Huawei Confidential" line, page number, footer bar and title-slide artwork. [`team_deck.py`](insight-ppt/scripts/team_deck.py) adds content as native, editable shapes: cyan corner triangle, blue topic kicker, one-line red conclusion titles, grey and dark cards, red-bar callout strips, takeaway lines, stat numbers, tables and native charts.
@@ -716,6 +736,17 @@ Writes, per metric, bars with 95% CIs, a change-vs-baseline chart, a CSV, trade-
 | `history [module] [--diff vA [vB]]` | Project changelog, a card's versions, or the diff between two versions (default: against current) |
 | `release <name> [--note TEXT] [--force]` | Freeze every current card into `releases/<name>/` with `MANIFEST.md`; refused while a card is stale or unjudged |
 | `readme [--readme PATH] [--insert-after HEADING] [--check]` | Write the generated section between `<!-- code-cards:start -->` and `<!-- code-cards:end -->`; `--check` prints the diff and exits 1 if the README is behind the cards |
+
+**System diagrams**: `system-diagram/scripts/sysdiag.py <command>` (standard library); `uv run --with playwright python system-diagram/scripts/render.py <file.excalidraw> [-o OUT.png] [--svg] [--scale 2] [--dark]`
+
+| Command | Purpose |
+|---|---|
+| `build <spec.json> [-o OUT.excalidraw] [--theme FILE] [--strict] [--require-evidence]` | Compile a spec to `.excalidraw` (+ `.evidence.md` when the spec has evidence); print lint warnings; `--strict` exits 1 on any warning |
+| `lint <spec.json> [--require-evidence]` | Build in memory and print warnings only |
+| `scan <repo> [--depth N] [--exclude GLOB] [--json] [--spec-out FILE]` | Inventory a codebase (uses `git ls-files` when available); `--spec-out` drafts a module-dependency spec |
+| `templates` / `new <template> <out.spec.json>` | List the templates / copy one to start from |
+
+`render.py` loads a pinned `@excalidraw/excalidraw` from esm.sh (needs network) and uses any Chromium already installed by Playwright when the bundled build is missing (`SYSDIAG_CHROMIUM=/path` to choose one).
 
 **Review decks**: `lit-review-deck/scripts/poster_deck.py <blocks.json> --out <deck.pptx> [--team-deck PATH]`
 Builds the poster deck (title, contents, legend, theme slides, also-worth-reading, next steps, sources) and writes `sources.md` beside it.

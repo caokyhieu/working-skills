@@ -1,0 +1,14 @@
+{
+  "_template": {"use": "Entities, key fields and relationships (tables, documents, protobuf messages)", "swap": "Only key + meaningful fields; label edges with cardinality (1..*), not verbs"},
+  "title": "Catalog data model",
+  "direction": "LR",
+  "root": {"id": "root", "layout": "row", "gap": 110, "align": "start", "children": [
+    {"id": "table", "label": "table", "role": "entity", "fields": ["PK id  uuid", "name  text", "datasource  text", "schema_json  jsonb"]},
+    {"id": "segment", "label": "segment", "role": "entity", "fields": ["PK id  text", "FK table_id  uuid", "interval  tstzrange", "path  text", "size_bytes  bigint"]},
+    {"id": "node", "label": "node", "role": "entity", "fields": ["PK id  text", "host  inet", "flight_port  int", "status  text"]}
+  ]},
+  "edges": [
+    {"from": "table", "to": "segment", "label": "1 .. *", "label_style": "text", "head": "triangle"},
+    {"from": "segment", "to": "node", "label": "* .. 1  served by", "label_style": "text", "head": "triangle"}
+  ]
+}

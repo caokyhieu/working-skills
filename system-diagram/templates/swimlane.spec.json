@@ -1,0 +1,25 @@
+{
+  "_template": {"use": "A process across owners (teams, services, humans): one horizontal lane per owner, steps left to right", "swap": "Lanes = owners; place each step in its owner's lane at its time column using spacers; handoffs are the edges that cross lanes"},
+  "title": "Schema change rollout",
+  "direction": "LR",
+  "root": {"id": "root", "layout": "column", "gap": 0, "align": "stretch", "children": [
+    {"id": "lane_dev", "title": "Developer", "title_pos": "top-left", "role": "lane", "layout": "row", "gap": 60, "children": [
+      {"id": "pr", "label": "Open PR", "sub": "migration.sql", "role": "component"},
+      {"spacer": 380},
+      {"id": "verify", "label": "Verify dashboards", "role": "component"}
+    ]},
+    {"id": "lane_ci", "title": "CI", "title_pos": "top-left", "role": "lane", "layout": "row", "gap": 60, "children": [
+      {"spacer": 200},
+      {"id": "test", "label": "Run migration test", "role": "compute"}
+    ]},
+    {"id": "lane_ops", "title": "Platform", "title_pos": "top-left", "role": "lane", "layout": "row", "gap": 60, "children": [
+      {"spacer": 400},
+      {"id": "apply", "label": "Apply in prod", "sub": "online DDL", "role": "control"}
+    ]}
+  ]},
+  "edges": [
+    {"from": "pr", "to": "test"},
+    {"from": "test", "to": "apply", "label": "green", "label_style": "text"},
+    {"from": "apply", "to": "verify"}
+  ]
+}

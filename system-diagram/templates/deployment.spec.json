@@ -1,0 +1,146 @@
+{
+ "_template": {
+  "use": "Where software runs: environments/networks -> hosts/pods -> processes, with ports and replicas",
+  "swap": "Only draw when placement matters (zones, replicas, ports). Network = dashed, host = zone, process = service"
+ },
+ "title": "Production deployment (eu-west-1)",
+ "direction": "LR",
+ "root": {
+  "id": "root",
+  "layout": "row",
+  "gap": 80,
+  "align": "center",
+  "children": [
+   {
+    "id": "users",
+    "label": "Users",
+    "role": "actor"
+   },
+   {
+    "id": "vpc",
+    "title": "VPC 10.0.0.0/16",
+    "role": "network",
+    "layout": "row",
+    "gap": 80,
+    "align": "center",
+    "children": [
+     {
+      "id": "pub",
+      "title": "public subnet",
+      "role": "lane",
+      "layout": "column",
+      "children": [
+       {
+        "id": "alb",
+        "label": "ALB",
+        "sub": ":443",
+        "role": "control"
+       }
+      ]
+     },
+     {
+      "id": "k8s",
+      "title": "EKS cluster",
+      "role": "zone",
+      "layout": "column",
+      "gap": 20,
+      "children": [
+       {
+        "id": "pod_worker",
+        "title": "worker pod  x2",
+        "role": "service",
+        "layout": "row",
+        "pad": 14,
+        "children": [
+         {
+          "id": "worker",
+          "label": "worker",
+          "sub": "app:v2.4.1",
+          "role": "compute"
+         }
+        ]
+       },
+       {
+        "id": "pod_api",
+        "title": "api pod  x3",
+        "role": "service",
+        "layout": "row",
+        "gap": 14,
+        "pad": 14,
+        "children": [
+         {
+          "id": "api",
+          "label": "api",
+          "sub": "app:v2.4.1 :8080",
+          "role": "compute"
+         },
+         {
+          "id": "sidecar",
+          "label": "envoy",
+          "sub": ":15001",
+          "role": "component"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "priv",
+      "title": "private subnet",
+      "role": "lane",
+      "layout": "column",
+      "gap": 24,
+      "children": [
+       {
+        "id": "sqs",
+        "label": "SQS",
+        "sub": "jobs queue",
+        "role": "queue"
+       },
+       {
+        "id": "rds",
+        "label": "RDS Postgres",
+        "sub": "db.r6g.large, multi-AZ",
+        "role": "store"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "edges": [
+  {
+   "from": "users",
+   "to": "alb",
+   "label": "HTTPS"
+  },
+  {
+   "from": "alb",
+   "to": "api",
+   "label": "HTTP :8080"
+  },
+  {
+   "from": "api",
+   "to": "sidecar"
+  },
+  {
+   "from": "sidecar",
+   "to": "rds",
+   "label": "5432"
+  },
+  {
+   "from": "api",
+   "to": "sqs",
+   "label": "enqueue",
+   "type": "async",
+   "from_side": "top"
+  },
+  {
+   "from": "sqs",
+   "to": "worker",
+   "label": "poll",
+   "type": "async"
+  }
+ ]
+}

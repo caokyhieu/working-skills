@@ -1,0 +1,59 @@
+{
+  "_doc": "Single source of truth for colours and styles. Roles are semantic: pick a role by what the thing IS, never by the colour you want. Edit this file (or pass a spec-level \"theme\" override) to re-skin every diagram. Colours follow the Excalidraw palette so the file stays editable in excalidraw.com with matching swatches.",
+  "font": {
+    "family": 2,
+    "families": {"sans": 2, "hand": 5, "mono": 3, "virgil": 1, "nunito": 6},
+    "size": {"title": 28, "group": 16, "node": 16, "sub": 12, "label": 13, "note": 13, "field": 13},
+    "char_width": {"1": 0.62, "2": 0.56, "3": 0.61, "5": 0.6, "6": 0.58},
+    "line_height": 1.25
+  },
+  "canvas": {"background": "#ffffff", "margin": 60, "grid": 4},
+  "spacing": {
+    "node_pad_x": 20, "node_pad_y": 12, "node_min_w": 120, "node_min_h": 48, "node_max_text_w": 200,
+    "group_pad": 24, "group_title_gap": 12, "gap": 32, "rank_gap": 120, "pair_sep": 26,
+    "port_margin": 10, "label_gap": 6
+  },
+  "roles": {
+    "default":   {"bg": "#ffffff", "stroke": "#1e1e1e", "fill": "solid", "width": 1, "style": "solid", "round": true,  "text": "#1e1e1e"},
+    "client":    {"bg": "#e9ecef", "stroke": "#495057", "fill": "solid", "width": 1, "style": "solid", "round": false, "text": "#1e1e1e", "_use": "client / adapter / connector that calls another system (Flight SQL Client, HTTP client, SDK)"},
+    "service":   {"bg": "#a5d8ff", "stroke": "#1e1e1e", "fill": "hachure", "width": 1, "style": "solid", "round": false, "text": "#1e1e1e", "_use": "a running server or process boundary that hosts components (Apache Flight SQL Server, API server)"},
+    "zone":      {"bg": "#f8f9fa", "stroke": "#868e96", "fill": "solid", "width": 1, "style": "solid", "round": false, "text": "#343a40", "_use": "host / node / VM / pod / cluster / process that contains services"},
+    "network":   {"bg": "transparent", "stroke": "#868e96", "fill": "solid", "width": 1, "style": "dashed", "round": true, "text": "#495057", "_use": "trust boundary, VPC, region, environment"},
+    "agent":     {"bg": "#f1f3f5", "stroke": "#495057", "fill": "solid", "width": 1, "style": "solid", "round": false, "text": "#1e1e1e", "_use": "an orchestrating process with internal columns (Query Serving Agent)"},
+    "lane":      {"bg": "#f8f9fa", "stroke": "#adb5bd", "fill": "solid", "width": 1, "style": "solid", "round": false, "text": "#495057", "_use": "inner column / track inside a container (execution lane, union lane)"},
+    "component": {"bg": "#ffffff", "stroke": "#1e1e1e", "fill": "solid", "width": 1, "style": "solid", "round": true,  "text": "#1e1e1e", "_use": "plain module or sub-component"},
+    "compute":   {"bg": "#c3fae8", "stroke": "#1e1e1e", "fill": "solid", "width": 1, "style": "solid", "round": true,  "text": "#1e1e1e", "_use": "execution / processing engine, reader, bridge, worker (DataFusion, JNI Bridge)"},
+    "control":   {"bg": "#fff3bf", "stroke": "#1e1e1e", "fill": "solid", "width": 1, "style": "solid", "round": true,  "text": "#1e1e1e", "_use": "control-plane concern: auth, scheduler, pool, config, policy"},
+    "catalog":   {"bg": "#d3f9d8", "stroke": "#1e1e1e", "fill": "solid", "width": 1, "style": "solid", "round": true,  "text": "#1e1e1e", "_use": "metadata, catalog, registry, index, cache"},
+    "store":     {"bg": "#ffffff", "stroke": "#1e1e1e", "fill": "solid", "width": 1, "style": "solid", "round": true,  "text": "#1e1e1e", "shape": "db", "_use": "database, object store, files on disk"},
+    "data":      {"bg": "#ffffff", "stroke": "#1e1e1e", "fill": "solid", "width": 1, "style": "solid", "round": true,  "text": "#1e1e1e", "_use": "data at rest shown as a box (Segment Files on SSD)"},
+    "queue":     {"bg": "#ffd8a8", "stroke": "#1e1e1e", "fill": "solid", "width": 1, "style": "solid", "round": true,  "text": "#1e1e1e", "_use": "queue, topic, stream, bus"},
+    "external":  {"bg": "#ffffff", "stroke": "#495057", "fill": "solid", "width": 1, "style": "solid", "round": true,  "text": "#1e1e1e", "_use": "third-party or other team's system (GaussDB, S3, Stripe)"},
+    "actor":     {"bg": "#e7f5ff", "stroke": "#1971c2", "fill": "solid", "width": 1, "style": "solid", "round": true,  "text": "#1e1e1e", "shape": "ellipse", "_use": "human user or calling application"},
+    "brand":     {"bg": "transparent", "stroke": "transparent", "fill": "solid", "width": 1, "style": "solid", "round": false, "text": "#1e1e1e", "size": 26, "_use": "a well-known product shown as a big wordmark (StarRocks); no box"},
+    "decision":  {"bg": "#fff3bf", "stroke": "#1e1e1e", "fill": "solid", "width": 1, "style": "solid", "round": false, "text": "#1e1e1e", "shape": "diamond", "_use": "branch in a flow"},
+    "state":     {"bg": "#e7f5ff", "stroke": "#1e1e1e", "fill": "solid", "width": 1, "style": "solid", "round": true,  "text": "#1e1e1e", "_use": "state in a state machine"},
+    "terminal":  {"bg": "#1e1e1e", "stroke": "#1e1e1e", "fill": "solid", "width": 1, "style": "solid", "round": true,  "text": "#ffffff", "shape": "ellipse", "_use": "start / end marker"},
+    "entity":    {"bg": "#ffffff", "stroke": "#1e1e1e", "fill": "solid", "width": 1, "style": "solid", "round": false, "text": "#1e1e1e", "_use": "ER entity / table with fields"},
+    "code":      {"bg": "#1e1e1e", "stroke": "#1e1e1e", "fill": "solid", "width": 1, "style": "solid", "round": true,  "text": "#b2f2bb", "font": "mono", "align": "left", "_use": "evidence artifact: a real snippet, payload or command"},
+    "planned":   {"bg": "#ffffff", "stroke": "#868e96", "fill": "solid", "width": 1, "style": "dashed", "round": true, "text": "#495057", "_use": "proposed / not built yet / assumption"},
+    "removed":   {"bg": "#ffe3e3", "stroke": "#e03131", "fill": "solid", "width": 1, "style": "dashed", "round": true, "text": "#c92a2a", "_use": "removed in an architecture delta"},
+    "added":     {"bg": "#d3f9d8", "stroke": "#2f9e44", "fill": "solid", "width": 2, "style": "solid", "round": true, "text": "#1e1e1e", "_use": "added in an architecture delta"},
+    "focus":     {"bg": "#ffc9c9", "stroke": "#e03131", "fill": "solid", "width": 2, "style": "solid", "round": true,  "text": "#1e1e1e", "_use": "the ONE or TWO things the reader must notice; never more than two"}
+  },
+  "edges": {
+    "default":  {"stroke": "#1e1e1e", "width": 1, "style": "solid"},
+    "data":     {"stroke": "#1e1e1e", "width": 1, "style": "solid"},
+    "control":  {"stroke": "#868e96", "width": 1, "style": "dashed"},
+    "async":    {"stroke": "#1e1e1e", "width": 1, "style": "dashed"},
+    "return":   {"stroke": "#1e1e1e", "width": 1, "style": "solid"},
+    "hot":      {"stroke": "#e03131", "width": 2, "style": "solid"},
+    "link":     {"stroke": "#1971c2", "width": 1, "style": "solid"}
+  },
+  "labels": {
+    "pill":  {"bg": "#9c36b5", "stroke": "#862e9c", "text": "#ffffff", "pad_x": 10, "pad_y": 6, "_use": "protocol / payload on a wire: SQL, Arrow Stream, ADBC, HTTP, gRPC, JSON"},
+    "chip":  {"bg": "#f3d9fa", "stroke": "#9c36b5", "text": "#1e1e1e", "pad_x": 8, "pad_y": 4, "_use": "softer protocol tag when many pills would be loud"},
+    "step":  {"bg": "#1e1e1e", "stroke": "#1e1e1e", "text": "#ffffff", "pad_x": 7, "pad_y": 4, "_use": "numbered step in a request flow"},
+    "text":  {"bg": "transparent", "stroke": "transparent", "text": "#1e1e1e", "pad_x": 2, "pad_y": 2, "_use": "plain action words beside a line: 'Discover table paths'"}
+  }
+}

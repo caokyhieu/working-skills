@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #ffffff; }
+    #root { display: inline-block; }
+    #root svg { display: block; }
+  </style>
+  <script>
+    // fonts (Helvetica, Excalifont, Nunito, Cascadia) are fetched from here and embedded in the SVG
+    window.EXCALIDRAW_ASSET_PATH = "https://esm.sh/@excalidraw/excalidraw@__VERSION__/dist/prod/";
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module">
+    import { exportToSvg } from "https://esm.sh/@excalidraw/excalidraw@__VERSION__?bundle";
+
+    window.renderDiagram = async function (data, opts) {
+      try {
+        const appState = Object.assign({}, data.appState || {}, {
+          exportBackground: true,
+          exportWithDarkMode: !!(opts && opts.dark),
+          exportPadding: (opts && opts.padding) || 40,
+          viewBackgroundColor: (data.appState && data.appState.viewBackgroundColor) || "#ffffff",
+        });
+        const svg = await exportToSvg({ elements: data.elements || [], appState, files: data.files || {} });
+        const root = document.getElementById("root");
+        root.innerHTML = "";
+        root.appendChild(svg);
+        return { success: true, width: svg.getAttribute("width"), height: svg.getAttribute("height"),
+                 svg: svg.outerHTML };
+      } catch (err) {
+        return { success: false, error: String(err && err.stack || err) };
+      }
+    };
+    window.__moduleReady = true;
+  </script>
+</body>
+</html>

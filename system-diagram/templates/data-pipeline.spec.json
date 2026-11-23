@@ -1,0 +1,170 @@
+{
+ "_template": {
+  "use": "Data moving through stages: sources -> ingest -> process -> store -> serve (ETL, lakehouse, feature pipelines)",
+  "swap": "One lane per stage, left to right; label edges with the format on the wire (CDC, Parquet, JSON)"
+ },
+ "title": "Analytics pipeline",
+ "direction": "LR",
+ "root": {
+  "id": "root",
+  "layout": "row",
+  "gap": 90,
+  "align": "stretch",
+  "children": [
+   {
+    "id": "s_src",
+    "title": "Sources",
+    "role": "lane",
+    "layout": "column",
+    "gap": 48,
+    "justify": "center",
+    "children": [
+     {
+      "id": "oltp",
+      "label": "Orders DB",
+      "sub": "MySQL",
+      "role": "store"
+     },
+     {
+      "id": "clicks",
+      "label": "Click events",
+      "sub": "web SDK",
+      "role": "external"
+     }
+    ]
+   },
+   {
+    "id": "s_ing",
+    "title": "Ingest",
+    "role": "lane",
+    "layout": "column",
+    "gap": 48,
+    "justify": "center",
+    "children": [
+     {
+      "id": "cdc",
+      "label": "Debezium",
+      "sub": "CDC",
+      "role": "compute"
+     },
+     {
+      "id": "kafka",
+      "label": "Kafka",
+      "sub": "raw.* topics",
+      "role": "queue"
+     }
+    ]
+   },
+   {
+    "id": "s_proc",
+    "title": "Process",
+    "role": "service",
+    "layout": "column",
+    "gap": 48,
+    "justify": "center",
+    "children": [
+     {
+      "id": "flink",
+      "label": "Flink job",
+      "sub": "dedupe + enrich",
+      "role": "compute"
+     },
+     {
+      "id": "dq",
+      "label": "Quality checks",
+      "role": "control"
+     }
+    ]
+   },
+   {
+    "id": "s_store",
+    "title": "Store",
+    "role": "lane",
+    "layout": "column",
+    "gap": 48,
+    "justify": "center",
+    "children": [
+     {
+      "id": "lake",
+      "label": "Iceberg tables",
+      "sub": "s3://lake/silver",
+      "role": "store"
+     },
+     {
+      "id": "catalog",
+      "label": "Catalog",
+      "sub": "Hive Metastore",
+      "role": "catalog"
+     }
+    ]
+   },
+   {
+    "id": "s_serve",
+    "title": "Serve",
+    "role": "lane",
+    "layout": "column",
+    "gap": 48,
+    "justify": "center",
+    "children": [
+     {
+      "id": "olap",
+      "label": "StarRocks",
+      "role": "compute"
+     },
+     {
+      "id": "bi",
+      "label": "Dashboards",
+      "role": "actor",
+      "shape": "rect"
+     }
+    ]
+   }
+  ]
+ },
+ "edges": [
+  {
+   "from": "oltp",
+   "to": "cdc",
+   "label": "binlog"
+  },
+  {
+   "from": "clicks",
+   "to": "kafka",
+   "label": "JSON"
+  },
+  {
+   "from": "cdc",
+   "to": "kafka"
+  },
+  {
+   "from": "kafka",
+   "to": "flink",
+   "label": "Avro"
+  },
+  {
+   "from": "flink",
+   "to": "dq",
+   "type": "control"
+  },
+  {
+   "from": "flink",
+   "to": "lake",
+   "label": "Parquet"
+  },
+  {
+   "from": "lake",
+   "to": "catalog",
+   "type": "control"
+  },
+  {
+   "from": "lake",
+   "to": "olap",
+   "label": "external table"
+  },
+  {
+   "from": "olap",
+   "to": "bi",
+   "label": "SQL"
+  }
+ ]
+}

@@ -1,0 +1,111 @@
+{
+ "_template": {
+  "use": "Producers and consumers decoupled by a broker/topic: fan-in to the bus, fan-out to subscribers",
+  "swap": "Topics as queue nodes inside the broker; label edges with event names, not 'publish'"
+ },
+ "title": "Order events",
+ "direction": "LR",
+ "root": {
+  "id": "root",
+  "layout": "row",
+  "gap": 100,
+  "align": "center",
+  "children": [
+   {
+    "id": "producers",
+    "role": "none",
+    "layout": "column",
+    "gap": 30,
+    "children": [
+     {
+      "id": "checkout",
+      "label": "checkout-svc",
+      "role": "compute"
+     },
+     {
+      "id": "payments",
+      "label": "payments-svc",
+      "role": "compute"
+     }
+    ]
+   },
+   {
+    "id": "broker",
+    "title": "Kafka",
+    "role": "service",
+    "layout": "column",
+    "gap": 18,
+    "children": [
+     {
+      "id": "t_orders",
+      "label": "orders",
+      "sub": "12 partitions",
+      "role": "queue"
+     },
+     {
+      "id": "t_pay",
+      "label": "payments",
+      "sub": "6 partitions",
+      "role": "queue"
+     }
+    ]
+   },
+   {
+    "id": "consumers",
+    "role": "none",
+    "layout": "column",
+    "gap": 24,
+    "children": [
+     {
+      "id": "email",
+      "label": "email-notifier",
+      "role": "component"
+     },
+     {
+      "id": "analytics",
+      "label": "analytics sink",
+      "role": "store",
+      "shape": "rect"
+     },
+     {
+      "id": "fulfil",
+      "label": "fulfilment",
+      "role": "compute"
+     }
+    ]
+   }
+  ]
+ },
+ "edges": [
+  {
+   "from": "checkout",
+   "to": "t_orders",
+   "label": "OrderPlaced"
+  },
+  {
+   "from": "payments",
+   "to": "t_pay",
+   "label": "PaymentCaptured"
+  },
+  {
+   "from": "t_orders",
+   "to": "fulfil",
+   "type": "async"
+  },
+  {
+   "from": "t_pay",
+   "to": "fulfil",
+   "type": "async"
+  },
+  {
+   "from": "t_orders",
+   "to": "email",
+   "type": "async"
+  },
+  {
+   "from": "t_orders",
+   "to": "analytics",
+   "type": "async"
+  }
+ ]
+}

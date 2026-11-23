@@ -1,0 +1,119 @@
+{
+ "_template": {
+  "use": "One request's path through the system, numbered in order (what happens when a user clicks X)",
+  "swap": "Number every edge with label_style 'step'; keep one path; side effects as dashed async edges"
+ },
+ "title": "What happens on POST /checkout",
+ "direction": "LR",
+ "root": {
+  "id": "root",
+  "layout": "row",
+  "gap": 130,
+  "align": "center",
+  "children": [
+   {
+    "id": "user",
+    "label": "Browser",
+    "role": "actor"
+   },
+   {
+    "id": "api",
+    "title": "checkout-api",
+    "role": "service",
+    "layout": "column",
+    "gap": 44,
+    "children": [
+     {
+      "id": "handler",
+      "label": "CheckoutHandler",
+      "sub": "POST /checkout",
+      "role": "component"
+     },
+     {
+      "id": "validate",
+      "label": "validate_cart()",
+      "role": "control"
+     },
+     {
+      "id": "charge",
+      "label": "PaymentClient",
+      "role": "client"
+     }
+    ]
+   },
+   {
+    "id": "right",
+    "role": "none",
+    "layout": "column",
+    "gap": 60,
+    "children": [
+     {
+      "id": "db",
+      "label": "orders DB",
+      "role": "store"
+     },
+     {
+      "id": "bus",
+      "label": "order.created",
+      "sub": "Kafka topic",
+      "role": "queue"
+     },
+     {
+      "id": "stripe",
+      "label": "Stripe",
+      "sub": "/v1/payment_intents",
+      "role": "external"
+     }
+    ]
+   }
+  ]
+ },
+ "edges": [
+  {
+   "from": "user",
+   "to": "handler",
+   "label": "1",
+   "label_style": "step"
+  },
+  {
+   "from": "handler",
+   "to": "validate",
+   "label": "2",
+   "label_style": "step"
+  },
+  {
+   "from": "validate",
+   "to": "charge",
+   "label": "3",
+   "label_style": "step"
+  },
+  {
+   "from": "charge",
+   "to": "stripe",
+   "label": "4 HTTPS",
+   "label_style": "step"
+  },
+  {
+   "from": "handler",
+   "to": "db",
+   "label": "5 INSERT",
+   "label_style": "step"
+  },
+  {
+   "from": "handler",
+   "to": "bus",
+   "label": "6 publish",
+   "label_style": "step",
+   "type": "async"
+  }
+ ],
+ "notes": [
+  {
+   "text": "retries 3x with idempotency key",
+   "near": "stripe",
+   "pos": "below",
+   "size": 12,
+   "color": "#495057"
+  }
+ ]
+}

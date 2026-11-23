@@ -1,0 +1,4 @@
+interface:
+  display_name: "System Diagram"
+  short_description: "Draw system/architecture diagrams as editable Excalidraw files from a codebase or an idea, with 15 templates and code-checked boxes and wires"
+  default_prompt: "Use $system-diagram to draw the architecture of this repository as an Excalidraw diagram: what runs where and what talks to what."

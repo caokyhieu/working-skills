@@ -1,0 +1,117 @@
+{
+ "_template": {
+  "use": "Systems with a control plane (config, scheduling, metadata) separate from a data plane (the hot path)",
+  "swap": "Control on top, data below; control edges grey dashed; the hot path may use type 'hot'"
+ },
+ "title": "Control plane vs data plane",
+ "direction": "TB",
+ "root": {
+  "id": "root",
+  "layout": "column",
+  "gap": 60,
+  "align": "stretch",
+  "children": [
+   {
+    "id": "cp",
+    "title": "Control plane",
+    "role": "lane",
+    "layout": "row",
+    "gap": 130,
+    "justify": "center",
+    "children": [
+     {
+      "id": "coord",
+      "label": "Coordinator",
+      "sub": "leader-elected",
+      "role": "control"
+     },
+     {
+      "id": "sched",
+      "label": "Scheduler",
+      "role": "control"
+     },
+     {
+      "id": "meta",
+      "label": "Metadata store",
+      "sub": "etcd",
+      "role": "catalog"
+     }
+    ]
+   },
+   {
+    "id": "dp",
+    "title": "Data plane",
+    "role": "service",
+    "layout": "row",
+    "gap": 90,
+    "justify": "center",
+    "children": [
+     {
+      "id": "ingress",
+      "label": "Ingress",
+      "role": "client"
+     },
+     {
+      "id": "w1",
+      "label": "Worker 1",
+      "role": "compute"
+     },
+     {
+      "id": "w2",
+      "label": "Worker 2",
+      "role": "compute"
+     },
+     {
+      "id": "sink",
+      "label": "Object store",
+      "role": "store"
+     }
+    ]
+   }
+  ]
+ },
+ "edges": [
+  {
+   "from": "coord",
+   "to": "sched",
+   "type": "control",
+   "label": "leader lease",
+   "label_style": "text"
+  },
+  {
+   "from": "sched",
+   "to": "meta",
+   "type": "control"
+  },
+  {
+   "from": "sched",
+   "to": "w1",
+   "type": "control",
+   "label": "assign",
+   "label_style": "text"
+  },
+  {
+   "from": "sched",
+   "to": "w2",
+   "type": "control"
+  },
+  {
+   "from": "ingress",
+   "to": "w1",
+   "type": "hot",
+   "label": "records"
+  },
+  {
+   "from": "w1",
+   "to": "w2",
+   "type": "hot",
+   "label": "shuffle"
+  },
+  {
+   "from": "w2",
+   "to": "sink",
+   "type": "hot",
+   "label": "Parquet"
+  }
+ ]
+}
